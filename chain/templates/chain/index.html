@@ -1,0 +1,87 @@
+{% extends "chain/base.html" %}
+
+{% block title %}{{request.user}} -- Home{% endblock %}
+
+{% block body %}
+
+<div class="" id="Left_Side">
+
+
+      <h3>Here Are Your Nodes</h3> <br>
+
+
+                <div class="">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Node_Name</th>
+
+                        <th>Doc</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+        {% for node in  mynodes %}
+                      <tr>
+                        <td><a href ="sensor/{{node.name}}"> {{node.name}}  </a></td>
+                        <td> {{node.doc}} </a></td>
+                      </tr>
+
+          {%endfor%}
+                    </tbody>
+                  </table>
+                </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block body_right %}
+
+<div class="" id="Right_Side">
+  {% if request.user.profile_set.all %}
+
+
+
+        {% for node in request.user.profile_set.all %}
+
+        <div class="albums-container container-fluid">
+
+            <div class="row"> <br> <br>
+
+                        <div class="col-sm-6 col-lg-5">
+                            <div class="thumbnail">
+
+                                <div class="caption">
+                                    <h3>{{ node.first_name }}
+                                  {{node.last_name}}
+                                  </h3>
+                                    <p>
+                                      {{node.about}}
+
+                                    </p>
+                                    <!-- View Details
+                                    <a href="{% url 'chain:UpdateUser'  node.id %}" class="btn btn-primary btn-sm" role="button">Update</a>
+
+-->
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+
+
+        </div>
+
+
+
+  {% endfor %}
+
+
+
+  {% else %}
+
+  {% endif %}
+
+</div>
+{% endblock  %}

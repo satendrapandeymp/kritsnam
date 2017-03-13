@@ -1,0 +1,126 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title  %} Kristnam {% endblock  %}</title>
+
+    {% load staticfiles %}
+
+    <script src="/static/chain/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/static/chain/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/chain/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/chain/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="javascript" type="text/js" href= "{% static '/chain/style.js' %}">
+    <link rel="stylesheet" type="text/css" href= "{% static '/chain/style.css' %}">
+  </head>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
+<body class="home">
+    <div class="container-fluid display-table">
+        <div class="row display-table-row">
+            <div class="col-md-2 col-sm-1 hidden-xs display-table-cell v-align box" id="navigation">
+
+                <div class="navi">
+                    <ul>
+                        <li class=""><a href="{% url 'chain:index' %}"><i class="fa fa-home" aria-hidden="true"></i><span class="hidden-xs hidden-sm">Home</span></a></li>
+                        <li class=""><a href="{% url 'chain:sensors' %}"><i class="fa fa-tasks" aria-hidden="true"></i><span class="hidden.bs.tooltip">Sensors</span></a></li>
+<!--
+                        <li><a href="{% url 'chain:sensors' %}"><i class="fa fa-tasks" aria-hidden="true"></i><span class="hidden-xs hidden-sm">Sensor</span></a></li>
+                        <li><a href="{% url 'chain:datas' %}"><i class="fa fa-bar-chart" aria-hidden="true"></i><span class="hidden-xs hidden-sm">Data</span></a></li>
+-->
+                   </ul>
+
+                </div>
+            </div>
+            <div class="col-md-10 col-sm-11 display-table-cell v-align">
+                <!--<button type="button" class="slide-toggle">Slide Toggle</button> -->
+                <div class="row">
+                    <header>
+                        <div class="col-md-7">
+                            <nav class="navbar-default pull-left">
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle collapsed" data-toggle="offcanvas" data-target="#side-menu" aria-expanded="false">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                </div>
+                            </nav>
+
+
+                        </div>
+                        <div class="col-md-5">
+                            <div class="header-rightside">
+                                <ul class="list-inline header-top pull-right">
+                                    <li><a href="https://mail.google.com/mail/"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+
+                                    <li class="dropdown">
+                                        <a href="{% url 'chain:logout' %}" class="dropdown-toggle" data-toggle="dropdown"> <strong>User</strong>
+                                        </a>
+
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <div class="navbar-content">
+                                                    <span>{{request.user}}</span>
+                                                    <p class="text-muted small">
+
+                                                    </p>
+                                                    <div class="divider">
+                                                    </div>
+                                                    <a href="{% url 'chain:change_pass' %}" class="view btn-sm active"> <strong>change_pass</strong></a>
+                                                    <a href="{% url 'chain:logout' %}" class="view btn-sm active" > <strong>Logout</strong></a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+
+                <div class="user-dashboard">
+                    <div class="row">
+                      {% block body_whole %}
+
+                      {% endblock  %}
+
+                        <div class="col-md-5 col-sm-5 col-xs-12 gutter">
+
+                          {% block body %}
+
+                          {% endblock  %}
+
+                        </div>
+                        <div class="col-md-7 col-sm-7 col-xs-12 gutter">
+
+                          {% block body_right %}
+
+                          {% endblock  %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- Modal
+    In case If we need a search bar
+    <div class="search hidden-xs hidden-sm">
+        <input type="text" placeholder="Search" id="search">
+    </div>
+
+
+  -->
+
+
+</body>
+</html>

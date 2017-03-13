@@ -1,0 +1,170 @@
+
+{% extends "chain/base.html" %}
+
+{% block title %}Data{% endblock %}
+
+{% block body %}
+
+<div class="" id="">
+
+        {% if mynodes %}
+
+              {% for nodes in mynodes %}
+
+                    {% if nodes.sensor_set.all %}
+                        {% for  sensor in nodes.sensor_set.all %}
+
+                        <div class="">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th>Sr.</th>
+                                <th>{{sensor}}</th>
+                                 <th>Timestamp</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                    {% for  data1 in sensor.data_set.all %}
+                    {% if forloop.counter < 11 %}
+                          {{sensor.filter.all.count }}
+                          {% if  data1.data  %}
+                          <tr>
+                            <td>  {{ forloop.counter }}  </td>
+                            <td> {{data1.data}}  </td>
+                            <td> {{data1.doc}} </a></td>
+                          </tr>
+                          {% endif %}
+                          {% endif %}
+
+
+                    {%endfor%}
+                        </tbody>
+                      </table>
+                    </div>
+
+
+
+                        {% endfor %}
+
+                    {%endif%}
+
+              {% endfor %}
+
+        {% else %}
+
+
+        {% endif %}
+
+
+</div>
+
+{% endblock %}
+{% block body_right %}
+
+<div class="" id="Right_Side">
+
+  <!DOCTYPE html>
+  <meta charset="utf-8">
+
+  <link type="text/css" rel="stylesheet" href="/static/chain/rickshaw/rickshaw.min.css">
+  <script src="/static/chain/rickshaw/vendor/d3.min.js"></script>
+  <script src="/static/chain/rickshaw/vendor/d3.layout.min.js"></script>
+  <script src="/static/chain/rickshaw/rickshaw.min.js"></script>
+  <style>
+  #chart_container {
+          position: relative;
+          display: inline-block;
+          font-family: Arial, Helvetica, sans-serif;
+  }
+  #chart {
+          display: inline-block;
+          margin-left: 40px;
+          margin-right: 10px;
+          margin-top: 40px;
+  }
+  #y_axis {
+          position: absolute;
+          top: 40;
+          bottom: 0;
+          width: 40px;
+  }
+  #legend {
+          display: inline-block;
+          vertical-align: top;
+          margin: 20px 0 0 10px;
+  }
+  #csv {
+          display: inline-block;
+          vertical-align: top;
+          margin: 20px 0 0 10px;
+  }
+  </style>
+
+  <div id="chart_container">
+          <div id="y_axis"></div>
+          <div id="chart"></div>
+          <div id="legend"></div>
+          <div id="csv"></div>
+  </div>
+
+  {% for nodes in mynodes %}
+  {% for sensor in nodes.sensor_set.all %}
+  <script>
+
+
+  var palette = new Rickshaw.Color.Palette();
+
+  var arr = [];
+
+  {% for data in mysensor|dictsort:"doc" %}
+    var dict = {};
+    dict["x"] = parseInt({{ data.doc|date:"U"}});
+    dict["y"] = parseInt({{data.data}});
+    arr.push(dict);
+  {%endfor%}
+
+  var graph = new Rickshaw.Graph( {
+          element: document.querySelector("#chart"),
+          width: 550,
+          height: 250,
+          series: [
+                          {
+                                  name: "Midwest",
+                                  data: arr,
+                                  color: palette.color()
+                          }
+
+                    ]
+  } );
+
+  var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+
+  var y_axis = new Rickshaw.Graph.Axis.Y( {
+          graph: graph,
+          orientation: 'left',
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+          element: document.getElementById('y_axis'),
+  } );
+
+  var legend = new Rickshaw.Graph.Legend( {
+          element: document.querySelector('#legend'),
+          graph: graph
+  } );
+
+  graph.render();
+
+  </script>
+  <div id="csv">
+    <h3>
+      <a href ="/chain/test/{{nodes.name}}"> Click </a> Here to download
+      your data as .csv file
+    </h3>
+
+  </div>
+
+  {%endfor%}
+{%endfor%}
+
+</div>
+
+{% endblock body_right %}

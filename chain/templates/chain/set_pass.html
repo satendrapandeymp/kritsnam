@@ -1,0 +1,55 @@
+{% extends "chain/base.html" %}
+
+{% block title %}verify{% endblock %}
+
+{% block body_whole %}
+
+<div id="login">
+
+<div id="register">
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+
+                <div class="panel-body">
+                    <h3>Set new Password: <br> <br> </h3>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    <form class="form-horizontal" role="form" action="#" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_username">
+                                Otp:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_curr_pass" maxlength="30" name="otp" type="text">
+                            </div>
+                            <br> <br>
+                            <label class="control-label col-sm-2" for="id_username">
+                                New_pass:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_New_pass" maxlength="30" name="New_pass" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

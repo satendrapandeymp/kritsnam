@@ -1,0 +1,31 @@
+{% extends "chain/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+<form action="" method="post">{% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <input type="submit" value="Confirm" />
+    <input type="submit" value="Cancel" onClick="javascript:history.go(-1);" />
+</form>
+
+
+
+{% endblock %}
+
+{% block body_right %}
+
+<div class="" id="Right_Side">
+
+  <h3> Here are something that can help you </h3>
+    <p>
+        We made a help page to help you throughout.
+        We will gonna put some suggestion for you here.
+    </p>
+</div>
+
+
+
+
+{% endblock body_right %}

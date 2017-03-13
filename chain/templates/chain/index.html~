@@ -1,0 +1,99 @@
+{% extends "chain/base.html" %}
+
+{% block title %}{{request.user}} -- Home{% endblock %}
+
+{% block body %}
+
+<div class="" id="Left_Side">
+
+
+
+{% if mynodes %}
+      <h3>Here Are Your Nodes</h3> <br>
+
+      {% for node in  mynodes %}
+
+
+            <ul class="list-group">
+              <li class="list-group-item">
+
+                &nbsp       <a href ="{% url 'chain:sensor'  node.id %}"> {{node.name}}  </a>
+                &nbsp       <a href ="{% url 'chain:UpdateNode'  node.id %}" class="btn btn-primary btn-sm" role="button"> Update Node </a>
+                &nbsp       <a href ="{% url 'chain:DeleteNode'  node.id %}"  class="btn btn-primary btn-sm" role="button"> Delete Node </a>
+                    <br>
+
+              </li>
+            </ul>
+
+
+
+      {% endfor %}
+
+{% else %}
+
+<h3>
+  You have not any node. <br> <br>
+  <a href="{%url "chain:AddNode"%}">Click</a> Here to add a Node.
+</h3>
+
+
+{% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block body_right %}
+
+<div class="" id="Right_Side">
+  {% if request.user.profile_set.all %}
+
+
+
+        {% for node in request.user.profile_set.all %}
+
+        <div class="albums-container container-fluid">
+
+            <div class="row"> <br> <br>
+
+                        <div class="col-sm-6 col-lg-5">
+                            <div class="thumbnail">
+                                  <a href="{% url 'chain:UpdateUser'  node.id %}">
+                                        <img src="chain/6.png" height="200" width="200"/> <br>
+                                       </a>
+
+                                <div class="caption">
+                                    <h3>{{ node.first_name }}
+                                  {{node.last_name}}</h3>
+                                    <p>
+                                      {{node.about}}
+
+                                    </p>
+                                    <!-- View Details -->
+                                    <a href="{% url 'chain:UpdateUser'  node.id %}" class="btn btn-primary btn-sm" role="button">Update</a>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+
+
+        </div>
+
+
+
+  {% endfor %}
+
+
+
+  {% else %}
+
+  <h3><a href="{% url 'chain:AddUser' %}"> click </a> here to Set up your profile.</h3>
+
+  {% endif %}
+
+</div>
+{% endblock  %}
