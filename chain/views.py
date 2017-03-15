@@ -7,7 +7,6 @@ from django.views.generic import View
 from django.views.generic.edit import CreateView,UpdateView, DeleteView
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
-from django.template import RequestContext
 from django.shortcuts import render_to_response
 from .tests import handle_uploaded_file
 from django.core.mail import send_mail, BadHeaderError
@@ -56,7 +55,7 @@ def forget_pass(request):
             subject =  "OTP for activation of your account: "
             x = random.randint(100000,999999)
             message =   ("Hi " + username + " Put this number in form to verify your Email : "
-                        + str(x) + ", you can also follow to this link to set new_pass to your Account http://127.0.0.1:8000/chain/otp/"
+                        + str(x) + ", you can also follow to this link to set new_pass to your Account http://127.0.0.1:8000/chain/set_pass/"
                         + username)
             to_email = user.email
             from_email = "satendrapandeymp@gmail.com"
@@ -68,17 +67,6 @@ def forget_pass(request):
             return render(request,'chain/forget_pass.html', {'error_message': 'Wrong username'}  )
     else:
         return render(request,'chain/forget_pass.html')
-
-def handler404(request):
-    response = render_to_response('404.html', {},context_instance=RequestContext(request))
-    response.status_code = 404
-    return response
-
-def handler500(request):
-    response = render_to_response('500.html', {},context_instance=RequestContext(request))
-    response.status_code = 500
-    return response
-
 
 # For adding a user Profile
 
