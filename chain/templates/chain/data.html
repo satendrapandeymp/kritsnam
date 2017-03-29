@@ -50,9 +50,20 @@ webshims.polyfill('forms forms-ext');
   <script src="https://momentjs.com/downloads/moment.min.js"></script>
   <script type="text/javascript" src="http://duijnisveld.wpengine.com/wp-content/themes/duijnisveld-kascontructies/scripts/min/theme-min.js?ver=4.5.3"></script>
 
-
-  <h3> Graph of the last ___ Days </h3>
+  <div class="" id="form">
+    <form class="" action="" method="post">
+        {% csrf_token %}
+        <input type="date" name="initial"/>
+        <input type="date" name="final"/>
+          <input type="Submit" name="" value="Submit">
+    </form>
+  </div>
   <style>
+
+  #form{
+          margin-left: 40px;
+  }
+
   #chart_container {
           position: relative;
           display: inline-block;
@@ -131,16 +142,10 @@ webshims.polyfill('forms forms-ext');
   }, false);
   graph.render();
   </script>
-  <br>
+    <h3> Graph of the last ___ Days </h3>
   <h3>
   <a href ="/chain/test/{{name}}"> Click </a> Here to download
   your data as .csv file
 </h3>
-<form class="" action="" method="post">
-    {% csrf_token %}
-    <input type="date" name="initial"/>
-    <input type="date" name="final"/>
-    <input type="Submit" name="" value="Submit">
-</form>
 </div>
 {% endblock body_right %}

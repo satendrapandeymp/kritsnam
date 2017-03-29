@@ -28,7 +28,7 @@
                               var number = 21;
                             </script>
                           {%endif%}
-                          <td><a href ="/chain/data/?name={{node.name}}"> {{node.name}}  </a></td>
+                          <td><a href ="/chain/data/{{node.name}}"> {{node.name}}  </a></td>
                           {%for data in node.data_set.all %}
                           {%if forloop.counter == 1 %}
                             <td> {{data.doc}} </a></td>

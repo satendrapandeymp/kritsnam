@@ -183,36 +183,16 @@ def logout_user(request):
 
 # To find all Sensors att One place
 def sensors(request):
-    if request.method=="GET":
-        lol = request.GET.get('id')
-        if lol==None:
-            mynodes = Node.objects.filter(owner=request.user)
-            sensors = Sensor.objects.filter(node_name=mynodes[0].id)[:1]
-            timedelta1 = timedelta(days=90)
-            datas = Data.objects.filter(sensor_name=sensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
-            name = sensors[0].name
-            return render(request, 'chain/sensors.html' , { 'mynodes' : mynodes, 'datas' : datas , 'name' : name})
-        else:
-            var = 0
-            mynodes = Node.objects.filter(owner=request.user)
-            sensors = Sensor.objects.filter(name=lol)
-            node = Node.objects.filter(owner=request.user, name = sensors[0].node_name)[:1]
-            if node!={}:
-                timedelta1 = timedelta(days=90)
-                datas = Data.objects.filter(sensor_name=sensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
-                name = sensors[0].name
-                return render(request, 'chain/sensors.html' , { 'mynodes' : mynodes, 'datas' : datas , 'name' : name})
-            else:
-                return render(request, '500.html')
+        mynodes = Node.objects.filter(owner=request.user)
+        return render(request, 'chain/sensors.html' , { 'mynodes' : mynodes})
+
 # To Find all sensors attached to a Node
-def sensor(request):
-        names = request.GET.get('name')
+def sensor(request,names):
         mynodes = Node.objects.filter(name=names)
         return render(request, 'chain/sensor.html' , { 'mynodes' : mynodes})
 
 # To find data of a sensor
-def data(request):
-    names = request.GET.get('name')
+def data(request,names):
     if request.method=="GET":
         mysensors = Sensor.objects.filter(name=names)
         timedelta1 = timedelta(days=90)

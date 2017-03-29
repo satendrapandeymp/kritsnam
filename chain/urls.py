@@ -10,9 +10,9 @@ urlpatterns = [
     # Basic Things For User
     url(r'^$', login_required(views.index) , name='index'),
     url(r'^sensors/$', login_required(views.sensors) , name='sensors'),
-    url(r'^sensor/(?P<names>[a-z,A-Z,_,1-9]+)/$', login_required(views.sensor) , name='sensor'),
+    url(r'^sensor/$', login_required(views.sensor) , name='sensor'),
     url(r'^datas/$', login_required(views.datas) , name='datas'),
-    url(r'^data/(?P<names>[a-z,A-Z,_,1-9]+)/$', login_required(views.data) , name='data'),
+    url(r'^data/$', login_required(views.data) , name='data'),
 
     # test -- Will Remove after Completing Project
     url(r'^test/(?P<names>[a-z,A-Z,_,1-9]+)/$', login_required(views.csv_out) , name='test'),

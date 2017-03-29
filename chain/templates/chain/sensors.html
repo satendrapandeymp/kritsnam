@@ -7,6 +7,7 @@
 <div class="" id="Left_Side">
 
 {% if mynodes %}
+
               {% for nodes in  mynodes %}
                   {% if nodes.sensor_set.all %}
 
@@ -22,20 +23,15 @@
                           <tbody>
                   {% for  node in nodes.sensor_set.all %}
                         <tr>
-                          {%if forloop.counter == 1 %}
-                            <script type="text/javascript">
-                              var test = '{{node.name}}';
-                              var number = 21;
-                            </script>
-                          {%endif%}
-                          <td><a href ="/chain/data/{{node.name}}"> {{node.name}}  </a></td>
+
+                          <td><a href ="/chain/data/?name={{node.name}}"> {{node.name}}  </a></td>
                           {%for data in node.data_set.all %}
                           {%if forloop.counter == 1 %}
                             <td> {{data.doc}} </a></td>
                           {%endif%}
                           {%endfor%}
                           <td>
-                          <button onclick="final('{{node.name}}',21)">Plot</button>
+                          <a href ="/chain/sensors/?id={{node.name}}"> <button >Plot</button> </a>
                           </td>
                         </tr>
 
@@ -76,135 +72,99 @@
   <script src="{% static '/chain/d3.layout.min.js' %}"></script>
   <script src="{% static '/chain/rickshaw.min.js' %}"></script>
   <style>
-#csv{
-  margin-left: 40px;
-  margin-right: 10px;
-  margin-top: 20px;
-}
-
-#sensor{
-  margin-left: 40px;
-  margin-right: 10px;
-  margin-top: 10px;
-}
-
-#chart_container {
-        display: inline-block;
-        font-family: Arial, Helvetica, sans-serif;
-}
-#chart {
-        display: inline-block;
-        margin-left: 40px;
-        margin-right: 10px;
-        margin-top: 40px;
-}
-
-#offset_form {
-        margin-top: 40px;
-        margin-left: 40px;
-        font-size: 15px;
-}
-#y_axis {
-        position: absolute;
-        top: 77;
-        bottom: 0;
-        width: 40px;
-}
-</style>
-
-<div id="chart_container">
-        <div id="y_axis"></div>
-        <div id="chart"></div>
-        <div id="legend"></div>
-        <form id="offset_form" class="toggler">
-                <input type="radio" name="offset" id="lines" value="lines" checked>
-                <label class="lines" for="lines">lines</label><br>
-                <input type="radio" name="offset" id="stack" value="zero">
-                <label class="stack" for="stack">stack</label>
-        </form>
-</div>
-<div id="sensor"></div>
-<div id="csv"> </div>
-<script>
-var arr = [];
-var temp = [];
-function plot(i,j)
-{
-  while (arr.length > 0) {
-  arr.pop();
+  <h3> Graph of the last ___ Days </h3>
+  <style>
+  #chart_container {
+          position: relative;
+          display: inline-block;
+          font-family: Arial, Helvetica, sans-serif;
   }
-  while (temp.length > 0) {
-  temp.pop();
+  #chart {
+          display: inline-block;
+          margin-left: 40px;
+          margin-right: 10px;
+          margin-top: 40px;
   }
-  var lol = j;
-  var test = i;
-  {% for nodes in  mynodes %}
-  {% for sensor in nodes.sensor_set.all %}
-  if (test == "{{sensor.name}}")
-  {
-    {% for data in  sensor.data_set.all %}
-    if ({{forloop.counter}} < lol)
-    {
-      var dict = {};
-      dict["x"] = parseInt({{ data.doc|date:"U"}});
-      dict["y"] = parseInt({{data.data}});
-      temp.push(dict);
-    }
-    {%endfor%}
+  #offset_form {
+          margin-top: 40px;
+          margin-left: 40px;
+          font-size: 15px;
   }
-  for (var i = 0; i < lol-1; i++) {
-    arr[i] = temp[lol-2-i];
+  #y_axis {
+          position: absolute;
+          top: 77;
+          bottom: 0;
+          width: 40px;
   }
+  #csv{
+          margin-left: 40px;
+          margin-right: 10px;
+          margin-top: 10px;
+  }
+  </style>
+  <div id="chart_container">
+          <div id="y_axis"></div>
+          <div id="chart"></div>
+          <div id="legend"></div>
+          <form id="offset_form" class="toggler">
+                  <input type="radio" name="offset" id="lines" value="lines" checked>
+                  <label class="lines" for="lines">lines</label><br>
+                  <input type="radio" name="offset" id="stack" value="zero">
+                  <label class="stack" for="stack">stack</label>
+          </form>
+  </div>
+  <script>
+  var palette = new Rickshaw.Color.Palette();
+  var arr = [];
+  {% for data in datas|dictsort:"doc"  %}
+    var dict = {};
+    dict["x"] = parseInt({{ data.doc|date:"U"}});
+    dict["y"] = parseInt({{data.data}});
+    arr.push(dict);
   {%endfor%}
-  {%endfor%}
-}
+  var graph = new Rickshaw.Graph( {
+          element: document.querySelector("#chart"),
+          width: 550,
+          height: 250,
+          series: [
+                          {
 
-function final(i,j) {
-    var s = "<h4> <a href =" + '/chain/test/' + i + "> Click </a> Here to download your data for this sensor as .csv file </h4>";
-    document.getElementById('sensor').innerHTML = "<h4> This plot is for sensor " + i + "--last 20 data point </h4>";
-    document.getElementById('csv').innerHTML = s;
-    plot(i,j);
-    graph.render();
-}
+                                  data: arr,
+                                  color: palette.color()
+                          }
 
-var palette = new Rickshaw.Color.Palette();
-var graph = new Rickshaw.Graph( {
-        element: document.querySelector("#chart"),
-        width: 540,
-        height: 240,
-        renderer: 'line',
-        series: [
-                {
-                        data: arr,
-                        color: palette.color()
-                },
-        ]
-} );
+                    ]
+  } );
+  var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+  var y_axis = new Rickshaw.Graph.Axis.Y( {
+          graph: graph,
+          orientation: 'left',
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+          element: document.getElementById('y_axis'),
+  } );
+  var offsetForm = document.getElementById('offset_form');
+  offsetForm.addEventListener('change', function(e) {
+          var offsetMode = e.target.value;
 
-var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
-var y_axis = new Rickshaw.Graph.Axis.Y( {
-        graph: graph,
-        orientation: 'left',
-        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-        element: document.getElementById('y_axis'),
-} );
-var offsetForm = document.getElementById('offset_form');
-offsetForm.addEventListener('change', function(e) {
-        var offsetMode = e.target.value;
-
-        if (offsetMode == 'lines') {
-                graph.setRenderer('line');
-                graph.offset = 'zero';
-        } else {
-                graph.setRenderer('stack');
-                graph.offset = offsetMode;
-        }
-        graph.render();
-}, false);
-final(test,11);
-final(test,21);
-</script>
-</div>
+          if (offsetMode == 'lines') {
+                  graph.setRenderer('line');
+                  graph.offset = 'zero';
+          } else {
+                  graph.setRenderer('stack');
+                  graph.offset = offsetMode;
+          }
+          graph.render();
+  }, false);
+  graph.render();
+  </script>
+  <br>
+  </div>
+  <div class="" id="csv">
+    <h3>
+    <a href ="/chain/test/{{name}}"> Click </a> Here to download
+    your data as .csv file
+    </h3>
+  </div>
 
 {%endif%}
 {% endblock body_right %}
