@@ -8,11 +8,11 @@ from django.views.generic.edit import CreateView,UpdateView, DeleteView
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import render_to_response
-from .tests import handle_uploaded_file
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
-import random
-import csv
+import random, csv, datetime
+from datetime import timedelta
+
 
 def change_pass(request):
     if request.method == "POST":
@@ -68,24 +68,6 @@ def forget_pass(request):
     else:
         return render(request,'chain/forget_pass.html')
 
-# For adding a user Profile
-
-def send_email(request):
-         #request.POST.get('subject', '')       #request.POST.get('message', '')
-    from_email = "satyendrapandeyiitk@gmail.com" #request.POST.get('from_email', '')
-    to_email = ""
-    if from_email:
-        for i in range(1,41):
-            subject =  "Message no: " + str(i)
-            x = random.randint(1000,9999)
-            message =   ""  + str(x)
-            send_mail(subject, message, from_email, [to_email])
-        return HttpResponseRedirect('/contact/thanks/')
-    else:
-        # In reality we'd use a form class
-        # to get proper validation errors.
-        return HttpResponse('Make sure all fields are entered and valid.')
-
 def AddUser(request):
     if request.method == "POST":
         form = ProfileForm(request.POST , request.FILES )
@@ -113,41 +95,6 @@ class UpdateUser(UpdateView):
 def index(request):
         mynodes = Node.objects.filter(owner=request.user)
         return render(request, 'chain/index.html' , { 'mynodes' : mynodes})
-
-# It's for testing some new things
-"""
-def test(request):
-        mynodes = Node.objects.filter(owner=request.user)
-        mysensor = Sensor.objects.filter(id=8)
-        lol = Data.objects.filter(sensor_name=8).order_by('doc')
-        return render(request, 'chain/test1.html' , { 'mysensor' : lol})
-
-# it's for registering new user
-class Register_User(View):
-    form_class = UserForm
-    template_name = 'chain/reg.html'
-
-    def get(self,request):
-        form = self.form_class(None)
-        return render (request,self.template_name , {'form' :form })
-
-    def post(self,request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            # normalised data_set
-            username = form.cleaned_data ['username']
-            password = form.cleaned_data ['password']
-            user.set_password(password)
-            user.is_active = 1
-            user.save()
-            user = authenticate(username=username,password=password)
-            if user is not None:
-                if user.is_active:
-                    login(request,user)
-                    return redirect ('chain:index')
-        return render(request, self.template_name , {'form': form})
-"""
 
 # It's for testing some new things
 def test(request,names):
@@ -211,16 +158,6 @@ class Register_User(View):
             user_name = str(username)
             user.save()
             return HttpResponseRedirect('/chain/otp/'+ username)
-            #user = authenticate(username=username,password=password)
-            #return redirect ('chain:test')
-            #if user is not None:
-                #if user.is_active:
-                    #login(request,user)
-                    #return redirect ('chain:index')
-                #else :
-                    #return redirect ('chain:test')
-        #return render(request, self.template_name , {'form': form})
-
 
 # For user login
 def login_user(request):
@@ -256,11 +193,17 @@ def sensor(request,names):
 
 # To find data of a sensor
 def data(request,names):
+    if request.method=="GET":
         mysensors = Sensor.objects.filter(name=names)
-        lol = Data.objects.filter(sensor_name=mysensors[0].id)[:20]
-        lol1 = Data.objects.filter(sensor_name=mysensors[0].id)
-        return render(request, 'chain/data.html' , { 'mysensors' : mysensors, 'mysensor' : lol, 'mydata' : lol1})
-
+        timedelta1 = timedelta(days=90)
+        lol = Data.objects.filter(sensor_name=mysensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
+        return render(request, 'chain/data.html' , {  'mysensor' : lol, 'name':names})
+    else:
+        mysensors = Sensor.objects.filter(name=names)
+        timedelta1 = request.POST['initial']
+        timedelta2 = request.POST['final']
+        lol = Data.objects.filter(sensor_name=mysensors[0].id, doc__gte= timedelta1 , doc__lte= timedelta2)
+        return render(request, 'chain/data.html' , {  'mysensor' : lol,'name':names})
 # To find all data From all sensors
 def datas(request):
         mynodes = Node.objects.filter(owner=request.user)
@@ -269,7 +212,7 @@ def datas(request):
         return render(request, 'chain/datas.html' , { 'mynodes' : mynodes, 'mysensor' : lol, 'mysensors' : lol1})
 
 # For CSV Download
-def test1(request,names):
+def csv_out(request,names):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(names)

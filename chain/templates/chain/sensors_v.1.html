@@ -1,0 +1,203 @@
+{% extends "chain/base.html" %}
+
+{% block title %}Sensor{% endblock %}
+
+{% block body %}
+
+<div class="" id="Left_Side">
+
+{% if mynodes %}
+              {% for nodes in  mynodes %}
+                  {% if nodes.sensor_set.all %}
+
+                      <div class="">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>Sensor_name</th>
+                              <th>Last Update</th>
+                              <th>No of</th>
+                              <th>data</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                  {% for  node in nodes.sensor_set.all %}
+                        <tr>
+                          {%if forloop.counter == 1 %}
+                            <script type="text/javascript">
+                              var test = '{{node.name}}';
+                              var number = 21;
+                            </script>
+                          {%endif%}
+                          <td><a href ="/chain/data/{{node.name}}"> {{node.name}}  </a></td>
+                          {%for data in node.data_set.all %}
+                          {%if forloop.counter == 1 %}
+                            <td> {{data.doc}} </a></td>
+                          {%endif%}
+                          {%endfor%}
+                          <td>
+                            <!--form  action="#" method="post" onsubmit="plot('nzoglaxvcueg')">
+                            {% csrf_token %}
+                            <input type="submit" name="plot" value="plot">
+                          </form-->
+                          <button onclick="final('{{node.name}}',21)">20</button>
+
+                          </td>
+                          <td>
+                            <!--form  action="#" method="post" onsubmit="plot('nzoglaxvcueg')">
+                            {% csrf_token %}
+                            <input type="submit" name="plot" value="plot">
+                          </form-->
+                          <button onclick="final('{{node.name}}',11)">10</button>
+
+                          </td>
+                        </tr>
+
+            {%endfor%}
+                      </tbody>
+                    </table>
+                  </div>
+
+          {%endif%}
+
+      {% endfor %}
+
+{% else %}
+
+
+{% endif %}
+
+</div>
+
+
+{% endblock %}
+
+
+
+{% block body_right %}
+
+{%if mynodes%}
+
+<div class="" id="Right_Side">
+  <!DOCTYPE html>
+  {% load staticfiles %}
+  <meta charset="utf-8">
+  <script src="{% static '/chain/react.min.js' %}"></script>
+  <script src="{% static '/chain/react-dom.min.js' %}"></script>
+  <script src="{% static '/chain/browser.min.js' %}"></script>
+  <link type="text/css" rel="stylesheet" href="{% static '/chain/rickshaw.min.css' %}">
+  <script src="{% static '/chain/d3.min.js' %}"></script>
+  <script src="{% static '/chain/d3.layout.min.js' %}"></script>
+  <script src="{% static '/chain/rickshaw.min.js' %}"></script>
+  <div id="sensor"> </div>
+  <style>
+  #chart_container {
+          position: relative;
+          display: inline-block;
+          font-family: Arial, Helvetica, sans-serif;
+  }
+  #chart {
+          display: inline-block;
+          margin-left: 40px;
+          margin-right: 10px;
+          margin-top: 40px;
+  }
+  #csv {
+          margin-top: 20px;
+  }
+  #sensor {
+          margin-top: 50px;
+  }
+  #y_axis {
+          position: absolute;
+          top: 40;
+          bottom: 0;
+          width: 40px;
+  }
+
+  </style>
+
+  <div id="chart_container">
+          <div id="y_axis"></div>
+          <div id="chart"></div>
+  </div>
+  <div id="csv"> </div>
+
+  <script type="text/javascript">
+
+  var palette = new Rickshaw.Color.Palette();
+
+  var arr = [];
+  var temp = [];
+  function plot(i,j)
+  {
+    while (arr.length > 0) {
+    arr.pop();
+    }
+    while (temp.length > 0) {
+    temp.pop();
+    }
+    var lol = j;
+    var test = i;
+    {% for nodes in  mynodes %}
+    {% for sensor in nodes.sensor_set.all %}
+    if (test == "{{sensor.name}}")
+    {
+      {% for data in  sensor.data_set.all %}
+      if ({{forloop.counter}} < lol)
+      {
+        var dict = {};
+        dict["x"] = parseInt({{ data.doc|date:"U"}});
+        dict["y"] = parseInt({{data.data}});
+        temp.push(dict);
+      }
+      {%endfor%}
+    }
+    for (var i = 0; i < lol-1; i++) {
+      arr[i] = temp[lol-2-i];
+    }
+    {%endfor%}
+    {%endfor%}
+
+    var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+
+    var y_axis = new Rickshaw.Graph.Axis.Y( {
+            graph: graph,
+            orientation: 'left',
+            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+            element: document.getElementById('y_axis'),
+    } );
+
+  }
+
+  var graph = new Rickshaw.Graph( {
+          element: document.querySelector("#chart"),
+          width: 550,
+          height: 250,
+          series: [
+                          {
+                                  data: arr,
+                                  color: palette.color()
+                          }
+
+                    ]
+  } );
+
+function final(i,j) {
+    plot(i,j);
+    graph.render();
+    var s = "<h4> <a href =" + '/chain/test/' + i + "> Click </a> Here to download your data for this sensor as .csv file </h4>";
+    document.getElementById('sensor').innerHTML = "<h3> This plot is for sensor " + i + "</h3>";
+    document.getElementById('csv').innerHTML = s;
+}
+
+  final(test,number);
+  final(test,21);
+
+
+  </script>
+
+</div>
+
+{%endif%}
+{% endblock body_right %}

@@ -7,8 +7,6 @@ app_name = 'chain'
 
 urlpatterns = [
 
-    url(r'^lol/$', login_required(views.send_email) , name='lol'),
-
     # Basic Things For User
     url(r'^$', login_required(views.index) , name='index'),
     url(r'^sensors/$', login_required(views.sensors) , name='sensors'),
@@ -17,7 +15,7 @@ urlpatterns = [
     url(r'^data/(?P<names>[a-z,A-Z,_,1-9]+)/$', login_required(views.data) , name='data'),
 
     # test -- Will Remove after Completing Project
-    url(r'^test/(?P<names>[a-z,A-Z,_,1-9]+)/$', login_required(views.test1) , name='test'),
+    url(r'^test/(?P<names>[a-z,A-Z,_,1-9]+)/$', login_required(views.csv_out) , name='test'),
     url(r'^otp/(?P<names>[a-z,A-Z,_,1-9]+)/', views.test , name='test'),
     url(r'^set_pass/(?P<names>[a-z,A-Z,_,1-9]+)/', views.set_pass , name='set_pass'),
 
