@@ -3,15 +3,26 @@
   margin-top: 1cm;
 }
 
+
 #forget {
-  margin-left: 5cm;
-  margin-top: 5cm;
-  margin-bottom: 1cm
+  margin-left: 180px;
+  margin-top: 20px;
+  background:  #f4f6f6 ;
+
 }
 
 #Left_Side {
   margin-left: 0cm;
   margin-top: 1cm;
+}
+
+
+.body_login{
+    background:  #f4f6f6 ;
+}
+
+.navbar{
+    background:  #E8DDCB ;
 }
 
 .body {

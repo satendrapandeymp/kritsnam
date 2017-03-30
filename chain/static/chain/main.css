@@ -1,0 +1,541 @@
+
+
+/* FONTS */
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700,900);
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,300,700,900);
+
+/* OVERALL ASPECT */
+
+body {
+  background-color: #f2f2f2;
+    font-family: "Lato";
+    font-weight: 300;
+    font-size: 16px;
+    color: #555;
+
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+
+    margin-top: 80px;
+    padding:0;
+    height:100%;
+}
+
+/* Titles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Raleway";
+    font-weight: 300;
+    color: #333;
+    font-variant: small-caps;
+}
+
+
+/* Paragraph & Typographic */
+p {
+    line-height: 28px;
+    margin-bottom: 25px;
+}
+
+.centered {
+    text-align: center;
+}
+
+/* Links */
+a {
+    color: #f85c37;
+    word-wrap: break-word;
+
+    -webkit-transition: color 0.1s ease-in, background 0.1s ease-in;
+    -moz-transition: color 0.1s ease-in, background 0.1s ease-in;
+    -ms-transition: color 0.1s ease-in, background 0.1s ease-in;
+    -o-transition: color 0.1s ease-in, background 0.1s ease-in;
+    transition: color 0.1s ease-in, background 0.1s ease-in;
+}
+
+a:hover,
+a:focus {
+    color: #7b7b7b;
+    text-decoration: none;
+    outline: 0;
+}
+
+a:before,
+a:after {
+    -webkit-transition: color 0.1s ease-in, background 0.1s ease-in;
+    -moz-transition: color 0.1s ease-in, background 0.1s ease-in;
+    -ms-transition: color 0.1s ease-in, background 0.1s ease-in;
+    -o-transition: color 0.1s ease-in, background 0.1s ease-in;
+    transition: color 0.1s ease-in, background 0.1s ease-in;
+}
+
+ hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+
+.navbar {
+	font-weight: 800;
+	font-size: 14px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.navbar-inverse {
+	background: #07181f;
+	border-color: #07181f;
+}
+
+.navbar-inverse .navbar-nav > .active > a {
+	background: #07181f;
+}
+
+.navbar-inverse .navbar-brand {
+	color: #999999;
+	font-weight: bolder;
+	font-size: 22px;
+	letter-spacing: 1px;
+}
+
+.navbar-inverse .navbar-brand i {
+	color: #cc3423;
+	font-size: 22px;
+	letter-spacing: 1px;
+}
+
+#bottom-footer li{
+  display: inline-block;
+  margin-left: 20px;
+  padding-left: 20px;
+  height: 20px;
+  width: auto;
+}
+
+
+
+/*TILT*/
+.tilt {
+  -webkit-transition: all 0.5s ease;
+     -moz-transition: all 0.5s ease;
+       -o-transition: all 0.5s ease;
+      -ms-transition: all 0.5s ease;
+          transition: all 0.5s ease;
+}
+
+.tilt:hover {
+  -webkit-transform: rotate(-10deg);
+     -moz-transform: rotate(-10deg);
+       -o-transform: rotate(-10deg);
+      -ms-transform: rotate(-10deg);
+          transform: rotate(-10deg);
+}
+
+#wrapper {
+  min-height: 100%;
+  height: 100%;
+  position:relative;
+}
+
+#body{
+  padding:10px;
+  padding-bottom: 120px;
+}
+
+
+/* ==========================================================================
+   Dropdown Button
+   ==========================================================================
+*/
+.dropbtn {
+/*   background-color: #4CAF50;*/
+   color: white;
+   padding: 16px;
+   font-size: 16px;
+   border: none;
+   cursor: pointer;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+   position: relative;
+   display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+   display: none;
+   position: absolute;
+   background-color: #f9f9f9;
+   min-width: 160px;
+   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+   color: black;
+   padding: 12px 16px;
+   text-decoration: none;
+   display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+   display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+   background-color: #3e8e41;
+}
+
+
+
+/* ==========================================================================
+   Wrap Sections
+   ========================================================================== */
+
+
+#headerwrap {
+	background: url(../assets/img/alt-header-1.png) no-repeat center top fixed;
+	margin-top: -10px;
+	padding-top:40px;
+	text-align:center;
+	background-attachment: relative;
+	background-position: center center;
+	min-height: 550px;
+	width: 100%;
+
+    -webkit-background-size: 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+#headerwrap h1 {
+	margin-top: 100px;
+	color: white;
+	font-size: 70px;
+	font-weight: 300;
+	letter-spacing: 3px;
+}
+
+#headerwrap h2 {
+	color: white;
+	font-size: 40px;
+	font-weight: 700;
+	letter-spacing: 2px;
+	/*	text-transform: uppercase; */
+	font-variant: small-caps;
+}
+
+/* Dark Grey Wrap */
+#dg {
+	background: #e0e0e0;
+	padding-top: 70px;
+	padding-bottom: 70px;
+	text-align: center;
+}
+
+#dg h3 {
+	font-weight: 900;
+}
+
+#dg h4 {
+	font-weight: 700;
+}
+
+#dg h5 {
+  font-weight: 600;
+}
+
+
+
+/* Light Grey */
+#lg {
+	background: #FFF8DB;
+	padding-top: 70px;
+	padding-bottom: 70px;
+	text-align: center;
+}
+
+#lg h3 {
+	font-weight: 900;
+}
+
+#lg h4 {
+	font-weight: 700;
+}
+
+#lg h5 {
+  font-weight: 500;
+}
+
+/* Light Blue */
+#lb {
+	background: #E9FACF;
+	padding-top: 70px;
+	padding-bottom: 70px;
+	text-align: center;
+}
+
+#lb h3 {
+	font-weight: 900;
+}
+
+#lb h4 {
+	font-weight: 700;
+}
+
+#lb h5 {
+  font-weight: 500;
+}
+
+#lb p {
+	color: black;
+}
+
+/* Red Wrap */
+#r {
+	background: #CBF7D6;
+	padding-top: 35px;
+	padding-bottom: 35px;
+}
+
+#r h3 {
+	font-weight: 900;
+}
+
+#r h4 {
+	color:black;
+	font-weight: 700;
+}
+
+
+#r h5 {
+  color:black;
+  font-weight: 500;
+}
+
+#r p {
+	color: black;
+}
+
+/* Blue Wrap */
+
+#blue {
+	background: #B1E6D3;
+	padding-top: 35px;
+	padding-bottom: 35px;
+}
+
+#blue h3 {
+	font-weight: 900;
+}
+
+#blue h4 {
+	color: black;
+	font-weight: 700;
+}
+
+#blue h5 {
+  font-weight: 500;
+}
+
+#blue p {
+	color: black;
+}
+
+/* Exotic Quixotic Wrap */
+
+#eq {
+	background: #ADD7D9;
+	padding-top: 35px;
+	padding-bottom: 35px;
+}
+
+#eq h3 {
+	font-weight: 900;
+}
+
+#eq h4 {
+	color: black;
+	font-weight: 700;
+}
+
+#eq h5 {
+  font-weight: 500;
+}
+
+#eq p {
+	color: black;
+}
+
+
+/* Deep Blue Wrap */
+
+#db {
+	background: #3B8686;
+	padding-top: 35px;
+	padding-bottom: 35px;
+}
+
+#db h3 {
+	font-weight: 900;
+}
+
+#db h4 {
+	color: white;
+	font-weight: 700;
+}
+
+#db h5 {
+  font-weight: 500;
+}
+
+#db p {
+	color: white;
+}
+
+/* Footer Wrap */
+#f {
+  position: absolute;
+  bottom:80px;
+  left:0px;
+  background: #07081f;
+	padding-top: 30px;
+	padding-bottom: 15px;
+  width:100%;
+  height:80px;
+}
+
+#foo {
+  position: absolute;
+  bottom:40px;
+  left:0px;
+  background: #07081f;
+	padding-top: 0px;
+	padding-bottom: 20px;
+  width:100%;
+  height:40px;
+}
+
+#ffooter {
+  position: absolute;
+  bottom:0;
+  left:0px;
+  background: #07081f;
+	padding-top: 0px;
+	padding-bottom: 8px;
+  width:100%;
+  height:40px;
+}
+
+#f i {
+	color: #1a1a1a;
+	font-size: 30px;
+	padding: 20px;
+}
+
+#f i:hover {
+	color: 78;
+}
+
+/****** SECTIONS *****/
+
+.w {
+	padding-top: 35px;
+}
+
+.w h3 {
+	font-weight: 900;
+}
+
+.w h4 {
+	font-weight: 700;
+}
+
+.w h5 {
+  font-weight: 500;
+}
+
+.w i {
+	color: #cc3423;
+	font-size: 30px;
+}
+
+
+.wb {
+	padding-top: 35px;
+	margin-bottom: 0px;
+}
+
+.wb h3 {
+  font-weight: 900;
+}
+
+.wb h4 {
+	font-weight: 700;
+}
+
+.wb h5 {
+  font-weight: 500;
+}
+
+.desc {
+	padding-top: 35px;
+}
+
+.desc h4 {
+	font-weight: 700;
+}
+
+.desc  h5 {
+  font-weight: 500;
+}
+
+.desc i {
+	color: #cc3423;
+	font-size: 12px;
+	padding: 5px;
+}
+
+
+/***** MODAL CONTACT *****/
+.modal-content {
+	border-radius: 0px;
+
+}
+
+.modal-header {
+	background: #bdbdbd;
+	color: white;
+}
+
+.modal-header h4 {
+	font-weight: 700;
+}
+
+.modal-body {
+	background: #f2f2f2;
+    font-family: "Lato";
+    font-weight: 300;
+    font-size: 16px;
+    color: #555;
+}
+
+.modal-footer {
+	background: #f2f2f2;
+	margin-top: 0px;
+}

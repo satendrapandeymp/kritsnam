@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     # for Root
-    url(r'^$', login_required(views.index) , name='login'),
+    url(r'^$', views.kritsnam , name='kritsnam'),
 
     # For App
     url(r'^chain/', include('chain.urls' , namespace="chain")),

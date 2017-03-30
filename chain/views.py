@@ -13,6 +13,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 import random, csv, datetime
 from datetime import timedelta
 
+def kritsnam(request):
+    return render(request,'chain/index1.html')
 
 def change_pass(request):
     if request.method == "POST":
@@ -168,8 +170,7 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                mynodes = Node.objects.filter(owner=request.user)
-                return render(request, 'chain/index.html', {'mynodes' : mynodes})
+                return HttpResponseRedirect('/chain/')
             else:
                 return render(request, 'chain/login.html', {'error_message': 'Your account has been disabled'})
         else:
@@ -179,7 +180,7 @@ def login_user(request):
 # For logout user
 def logout_user(request):
         logout(request)
-        return render(request, 'chain/login.html')
+        return HttpResponseRedirect('/')
 
 # To find all Sensors att One place
 def sensors(request):
