@@ -7,19 +7,26 @@
 <div class="" id="Left_Side">
 
 {% if mynodes %}
+
+<div class="">
+  <table class="table">
+    <thead>
+      <tr>
+        <div class="" id="sensor_table">
+          <th>Sensor_name</th>
+        </div>
+        <div class="" id="last_update">
+          <th>Last Update</th>
+        </div>
+        <div class="" id="plot_table">
+          <th>Plot</th>
+        </div>
+      </tr>
+    </thead>
+    <tbody>
+
               {% for nodes in  mynodes %}
                   {% if nodes.sensor_set.all %}
-
-                      <div class="">
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th>Sensor_name</th>
-                              <th>Last Update</th>
-                              <th>Plot</th>
-                            </tr>
-                          </thead>
-                          <tbody>
                   {% for  node in nodes.sensor_set.all %}
                         <tr>
                           {%if forloop.counter == 1 %}
@@ -28,22 +35,31 @@
                               var number = 21;
                             </script>
                           {%endif%}
-                          <td><a href ="/chain/data/?name={{node.name}}"> {{node.name}}  </a></td>
-                          {%for data in node.data_set.all %}
-                          {%if forloop.counter == 1 %}
-                            <td> {{data.doc}} </a></td>
-                          {%endif%}
-                          {%endfor%}
-                          <td>
-                          <button onclick="final('{{node.name}}',21)">Plot</button>
-                          </td>
+                          <div class="" id="sensor_table">
+                            <td><a href ="/chain/data/?name={{node.name}}"> {{node.name}}  </a></td>
+                          </div>
+                          <div class="" id="last_update">
+                            {%if node.data_set.all %}
+                              {%for data in node.data_set.all %}
+                                {%if forloop.counter == 1 %}
+                                  <td> {{data.doc}} </td>
+                                {%endif%}
+                              {%endfor%}
+                            {%else%}
+                              <td>  Not Updated </td>
+                            {%endif%}
+                          </div>
+                          <div class="" id="plot_table">
+                            <td>
+                            <button onclick="final('{{node.name}}',21)">Plot</button>
+                            </td>
+                          </div>
                         </tr>
-
-            {%endfor%}
+                        {%endfor%}
                       </tbody>
                     </table>
                   </div>
-
+          {% else %}
           {%endif%}
 
       {% endfor %}

@@ -3,6 +3,17 @@
   margin-top: 1cm;
 }
 
+#sensor_table {
+  width: 100px;
+}
+
+#plot_table {
+  width: 100px;
+}
+
+#last_update {
+  width: 100px;
+}
 
 #forget {
   margin-left: 180px;
@@ -21,7 +32,7 @@
     background:  #f4f6f6 ;
 }
 
-.navbar{
+.navbar1{
     background:  #E8DDCB ;
 }
 
