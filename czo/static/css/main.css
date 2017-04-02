@@ -201,9 +201,8 @@ a:after {
    Wrap Sections
    ========================================================================== */
 
-
 #headerwrap {
-	background: url(../assets/img/alt-header-1.png) no-repeat center top fixed;
+	background: url(../img/alt-header-1.png) no-repeat center top fixed;
 	margin-top: -10px;
 	padding-top:40px;
 	text-align:center;

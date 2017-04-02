@@ -71,7 +71,6 @@
 {% endblock %}
 
 
-
 {% block body_right %}
 
 {%if mynodes%}
@@ -80,13 +79,13 @@
   <!DOCTYPE html>
   {% load staticfiles %}
   <meta charset="utf-8">
-  <script src="{% static '/czo/react.min.js' %}"></script>
-  <script src="{% static '/czo/react-dom.min.js' %}"></script>
-  <script src="{% static '/czo/browser.min.js' %}"></script>
-  <link type="text/css" rel="stylesheet" href="{% static '/czo/rickshaw.min.css' %}">
-  <script src="{% static '/czo/d3.min.js' %}"></script>
-  <script src="{% static '/czo/d3.layout.min.js' %}"></script>
-  <script src="{% static '/czo/rickshaw.min.js' %}"></script>
+  <script src="{% static '/js/react.min.js' %}"></script>
+  <script src="{% static '/js/react-dom.min.js' %}"></script>
+  <script src="{% static '/js/browser.min.js' %}"></script>
+  <link type="text/css" rel="stylesheet" href="{% static '/css/rickshaw.min.css' %}">
+  <script src="{% static '/js/d3.min.js' %}"></script>
+  <script src="{% static '/js/d3.layout.min.js' %}"></script>
+  <script src="{% static '/js/rickshaw.min.js' %}"></script>
   <style>
   <h3> Graph of the last ___ Days </h3>
   <style>
@@ -101,14 +100,24 @@
           margin-right: 10px;
           margin-top: 40px;
   }
-  #offset_form {
-          margin-top: 40px;
-          margin-left: 40px;
-          font-size: 15px;
+
+  .rickshaw_graph .x_tick .title {
+    bottom: -24px;
+    left: -18px;
   }
+
+  #plot_btn {
+    color: inherit;
+  }
+
+  #plot_range {
+    margin-top: 40px;
+    margin-left: 60px;
+  }
+
   #y_axis {
           position: absolute;
-          top: 77;
+          top: 80;
           bottom: 0;
           width: 40px;
   }
@@ -122,22 +131,18 @@
           <div id="y_axis"></div>
           <div id="chart"></div>
           <div id="legend"></div>
-          <form id="offset_form" class="toggler">
-                  <input type="radio" name="offset" id="lines" value="lines" checked>
-                  <label class="lines" for="lines">lines</label><br>
-                  <input type="radio" name="offset" id="stack" value="zero">
-                  <label class="stack" for="stack">stack</label>
-          </form>
   </div>
   <script>
   var palette = new Rickshaw.Color.Palette();
   var arr = [];
+  var temp = [];
   {% for data in datas|dictsort:"doc"  %}
     var dict = {};
     dict["x"] = parseInt({{ data.doc|date:"U"}});
     dict["y"] = parseInt({{data.data}});
     arr.push(dict);
   {%endfor%}
+
   var graph = new Rickshaw.Graph( {
           element: document.querySelector("#chart"),
           width: 550,
@@ -151,41 +156,69 @@
 
                     ]
   } );
+
   var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
-  x_axis.render();
   var y_axis = new Rickshaw.Graph.Axis.Y( {
           graph: graph,
           orientation: 'left',
           tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
           element: document.getElementById('y_axis'),
   } );
-  y_axis.render();
-  var offsetForm = document.getElementById('offset_form');
-  offsetForm.addEventListener('change', function(e) {
-          var offsetMode = e.target.value;
 
-          if (offsetMode == 'lines') {
-                  graph.setRenderer('line');
-                  graph.offset = 'zero';
-          } else {
-                  graph.setRenderer('stack');
-                  graph.offset = offsetMode;
+  function plot(i)
+    {
+      while (arr.length > 0) {
+      arr.pop();
+      }
+
+      while (temp.length > 0) {
+      temp.pop();
+      }
+
+      {% for data in datas  %}
+        var dict = {};
+        if ({{forloop.counter}} <= i)
+          {
+            dict["x"] = parseInt({{ data.doc|date:"U"}});
+            dict["y"] = parseInt({{data.data}});
+            temp.push(dict);
+              console.log(temp);
           }
-          x_axis.render();
-          y_axis.render();
-          graph.render();
+      {%endfor%}
 
-  }, false);
+      for (var i = 0; i < temp.length; i++) {
+        arr[i] = temp[temp.length - i -1];
+      }
+
+    }
+
+    function final(i) {
+    plot(i);
+    graph.render();
+  }
   graph.render();
+
+
   </script>
   <br>
   </div>
-  <div class="" id="data_range">
-    <form class="" action="" method="post">
-        {% csrf_token %}
-          <input type="Submit" name="" value="Submit">
-    </form>
+  <div class="" id="plot_range">
+    <strong>
+   <h4>No of data points : <input type="text" id="plot_data" />
+    <button onclick="final(document.getElementById('plot_data').value)" id="plot_btn"> Plot </button>
+    <script type="text/javascript">
+      document.getElementById("plot_data")
+          .addEventListener("keyup", function(event) {
+          event.preventDefault();
+          if (event.keyCode == 13) {
+              document.getElementById("plot_btn").click();
+          }
+      });
+    </script>
+  </h4>
+  </strong>
   </div>
+
   <div class="" id="csv">
     <h3>
     <a href ="/czo/csv/?sensor_id={{sensor_id}}"> Click </a> Here to download
