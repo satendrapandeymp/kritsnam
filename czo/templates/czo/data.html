@@ -1,0 +1,161 @@
+<script src="//cdn.jsdelivr.net/webshim/1.14.5/polyfiller.js"></script>
+<script>
+webshims.setOptions('forms-ext', {types: 'date'});
+webshims.polyfill('forms forms-ext');
+</script>
+{% extends "czo/base.html" %}
+{% block title %}Data{% endblock %}
+{% block body %}
+<div class="" id="Left_Side">
+        {% if mysensor %}
+                <h3>Here is your Data Sir --  <br> </h3>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Sr.</th>
+                          <th>Data</th>
+                           <th>Timestamp</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for  node in mysensor %}
+                        {% if forloop.counter < 11 %}
+                        <tr>
+                          <td>  {{ forloop.counter }}  </td>
+                          <td> {{node.data}}  </td>
+                          <td> {{node.doc}} </a></td>
+                        </tr>
+                        {% endif %}
+                        {%endfor%}
+                  </tbody>
+                </table>
+        {% else %}
+            <h3>No data In this sensor </h3>
+        {% endif %}
+</div>
+{% endblock %}
+
+{% block body_right %}
+<div class="" id="Right_Side">
+  <!DOCTYPE html>
+  {% load staticfiles %}
+  <meta charset="utf-8">
+  <script src="{% static '/czo/react.min.js' %}"></script>
+  <script src="{% static '/czo/react-dom.min.js' %}"></script>
+  <script src="{% static '/czo/browser.min.js' %}"></script>
+  <link type="text/css" rel="stylesheet" href="{% static '/czo/rickshaw.min.css' %}">
+  <script src="{% static '/czo/d3.min.js' %}"></script>
+  <script src="{% static '/czo/d3.layout.min.js' %}"></script>
+  <script src="{% static '/czo/rickshaw.min.js' %}"></script>
+  <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  <script type="text/javascript" src="http://duijnisveld.wpengine.com/wp-content/themes/duijnisveld-kascontructies/scripts/min/theme-min.js?ver=4.5.3"></script>
+
+  <div class="" id="form">
+    <form class="" action="" method="post">
+        {% csrf_token %}
+        <input type="date" name="initial"/>
+        <input type="date" name="final"/>
+          <input type="Submit" name="" value="Submit">
+    </form>
+  </div>
+  <style>
+
+  #form{
+          margin-left: 40px;
+  }
+
+  #chart_container {
+          position: relative;
+          display: inline-block;
+          font-family: Arial, Helvetica, sans-serif;
+  }
+  #chart {
+          display: inline-block;
+          margin-left: 40px;
+          margin-right: 10px;
+          margin-top: 40px;
+  }
+  #offset_form {
+          margin-top: 40px;
+          margin-left: 40px;
+          font-size: 15px;
+  }
+  #y_axis {
+          position: absolute;
+          top: 40;
+          bottom: 0;
+          width: 40px;
+  }
+  </style>
+  <div id="chart_container">
+          <div id="y_axis"></div>
+          <div id="chart"></div>
+          <div id="legend"></div>
+          <form id="offset_form" class="toggler">
+                  <input type="radio" name="offset" id="lines" value="lines" checked>
+                  <label class="lines" for="lines">lines</label><br>
+                  <input type="radio" name="offset" id="stack" value="zero">
+                  <label class="stack" for="stack">stack</label>
+          </form>
+  </div>
+  <script>
+  var palette = new Rickshaw.Color.Palette();
+  var arr = [];
+  {% for data in mysensor|dictsort:"doc"  %}
+    var dict = {};
+    dict["x"] = parseInt({{ data.doc|date:"U"}});
+    dict["y"] = parseInt({{data.data}});
+    arr.push(dict);
+  {%endfor%}
+  var graph = new Rickshaw.Graph( {
+          element: document.querySelector("#chart"),
+          width: 550,
+          height: 250,
+          series: [
+                          {
+
+                                  data: arr,
+                                  color: palette.color()
+                          }
+
+                    ]
+  } );
+  var x_axis = new Rickshaw.Graph.Axis.Time( {
+          graph: graph,
+          orientation: "bottom",
+          element: document.getElementById("x_axis"),
+  } );
+  x_axis.render();
+  var y_axis = new Rickshaw.Graph.Axis.Y( {
+          graph: graph,
+          orientation: 'left',
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+          element: document.getElementById('y_axis'),
+  } );
+    y_axis.render();
+  var offsetForm = document.getElementById('offset_form');
+  offsetForm.addEventListener('change', function(e) {
+          var offsetMode = e.target.value;
+
+          if (offsetMode == 'lines') {
+                  graph.setRenderer('line');
+                  graph.offset = 'zero';
+          } else {
+                  graph.setRenderer('stack');
+                  graph.offset = offsetMode;
+          }
+          x_axis.render();
+          y_axis.render();
+          graph.render();
+  }, false);
+
+
+  graph.render();
+  </script>
+    <h3> Graph of the last ___ Days </h3>
+  <h3>
+  <a href ="/czo/csv/?sensor_id={{name}}"> Click </a> Here to download
+  your data as .csv file
+</h3>
+</div>
+{% endblock body_right %}

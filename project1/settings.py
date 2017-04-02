@@ -29,7 +29,7 @@ ALLOWED_HOSTS = ['172.25.110.122','172.24.128.220','localhost','127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'chain.apps.ChainConfig',
+    'czo.apps.czoConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'test',
         'USER': 'root',
-        'PASSWORD': '  ',
+        'PASSWORD': '',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '',
         'OPTIONS': {
