@@ -90,13 +90,6 @@ webshims.polyfill('forms forms-ext');
   <div id="chart_container">
           <div id="y_axis"></div>
           <div id="chart"></div>
-          <div id="legend"></div>
-          <form id="offset_form" class="toggler">
-                  <input type="radio" name="offset" id="lines" value="lines" checked>
-                  <label class="lines" for="lines">lines</label><br>
-                  <input type="radio" name="offset" id="stack" value="zero">
-                  <label class="stack" for="stack">stack</label>
-          </form>
   </div>
   <script>
   var palette = new Rickshaw.Color.Palette();
@@ -107,6 +100,7 @@ webshims.polyfill('forms forms-ext');
     dict["y"] = parseInt({{data.data}});
     arr.push(dict);
   {%endfor%}
+
   var graph = new Rickshaw.Graph( {
           element: document.querySelector("#chart"),
           width: 550,
@@ -125,31 +119,12 @@ webshims.polyfill('forms forms-ext');
           orientation: "bottom",
           element: document.getElementById("x_axis"),
   } );
-  x_axis.render();
   var y_axis = new Rickshaw.Graph.Axis.Y( {
           graph: graph,
           orientation: 'left',
           tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
           element: document.getElementById('y_axis'),
   } );
-    y_axis.render();
-  var offsetForm = document.getElementById('offset_form');
-  offsetForm.addEventListener('change', function(e) {
-          var offsetMode = e.target.value;
-
-          if (offsetMode == 'lines') {
-                  graph.setRenderer('line');
-                  graph.offset = 'zero';
-          } else {
-                  graph.setRenderer('stack');
-                  graph.offset = offsetMode;
-          }
-          x_axis.render();
-          y_axis.render();
-          graph.render();
-  }, false);
-
-
   graph.render();
   </script>
     <h3> Graph of the last ___ Days </h3>

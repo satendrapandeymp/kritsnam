@@ -238,7 +238,7 @@ def csv_out(request):
     response['Content-Disposition'] = 'attachment; filename=sensor-{0}.csv'.format(sensor_id)
     Datas = Data.objects.filter(sensor_name=sensor_id).order_by('doc')
     writer = csv.writer(response)
-    writer.writerow(['Data', 'Timestamp', 'UnixTimestamp'])
+    writer.writerow(['Data', 'Timestamp'])
     for data in Datas:
-        writer.writerow([data.data, data.doc, time.mktime(data.doc.timetuple())])
+        writer.writerow([data.data, data.doc])
     return response

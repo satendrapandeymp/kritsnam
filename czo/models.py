@@ -7,70 +7,84 @@ import time
 from django_unixdatetimefield import UnixDateTimeField
 
 
-class Profile(models.Model):
-    first_name = models.CharField(max_length = 32)
-    last_name = models.CharField(max_length = 32)
-    owner = models.ForeignKey(User,on_delete = models.CASCADE)
-    about = models.TextField(max_length = 400, blank=True)
-    doc = models.FloatField(max_length = 16,blank=True )
-    image = models.FileField()
+
+class Gateway(models.Model):
+
+    device_id = models.CharField(max_length = 32, unique=True)
+    name = models.CharField(max_length = 32)
+    desc = models.TextField(max_length = 196, blank=True)
+    doc = models.DateTimeField(default=datetime.datetime.now)
+
     def get_absolute_url(self):
         return reverse('czo:index')
+
     def __str__(self):
-        return self.first_name
+        return self.name
+
+
 
 # for Node --
 class Node(models.Model):
+
     name = models.CharField(max_length = 32)
+    gateway_name = models.ForeignKey(Gateway,on_delete = models.CASCADE)
     owner = models.ForeignKey(User,on_delete = models.CASCADE)
-    description = models.TextField(max_length = 400, blank=True)
-    doc = models.DateTimeField(blank=True, default=datetime.datetime.now)
+    desc = models.TextField(blank=True)
+    doc = models.DateTimeField(default=datetime.datetime.now)
+
     def get_absolute_url(self):
         return reverse('czo:index')
+
     def __str__(self):
-    #    str1 = str(self.owner) + ' -- ' + self.name
         return self.name
 
 # For Sensor --
 class Sensor(models.Model):
+
     node_name = models.ForeignKey(Node,on_delete = models.CASCADE)
     name = models.CharField(max_length = 32)
-    description = models.TextField(max_length = 400, blank=True)
-    doc = models.DateTimeField(blank=True, default=datetime.datetime.now)
+    desc = models.TextField(max_length = 196, blank=True)
+    doc = models.DateTimeField(default=datetime.datetime.now)
+
     def get_absolute_url(self):
         return reverse('czo:index')
+
     def __str__(self):
         return str(self.name)
 
 # For Data --
 class Data(models.Model):
-    sensor_name = models.ForeignKey(Sensor,on_delete = models.CASCADE)
-    data = models.FloatField(default = 1.000)
-    doc = models.DateTimeField(blank=True, default=datetime.datetime.now)
+
+    sensor_name = models.ForeignKey(Sensor, on_delete = models.CASCADE)
+    data = models.FloatField()
+    doc = models.DateTimeField(default=datetime.datetime.now)
+
     class Meta:
         ordering = ['-doc']
+
     def get_absolute_url(self):
         return reverse('czo:index')
+
     def __str__(self):
         return str(self.sensor_name)
 
+class GatewayStats(models.Model):
 
-# For Node Form
-class NodeForm(ModelForm):
+    gateway = models.ForeignKey(Gateway,on_delete = models.CASCADE)
+    rssi = models.IntegerField(help_text="rssi value")
+    vcell = models.FloatField(help_text="battery voltage")
+    soc = models.FloatField(help_text="state of charge")
+    lastUpdate = models.DateTimeField(default=datetime.datetime.now)
+    
     class Meta:
-        model = Node
-        exclude = ('owner', 'doc',)
+        ordering = ['-lastUpdate']
 
-class ProfileForm(ModelForm):
-    class Meta:
-        model = Profile
-        exclude = ('owner', 'doc',)
+class NodeStats(models.Model):
 
-# For Sensor to set that in form you can get only User nodes.
-class SensorForm(ModelForm):
+    node = models.ForeignKey(Node, on_delete = models.CASCADE)
+    rssi = models.IntegerField(help_text="rssi value")
+    battery = models.FloatField(help_text="battery voltage")
+    lastUpdate = models.DateTimeField(default=datetime.datetime.now)
+
     class Meta:
-        model = Sensor
-        exclude = ('doc',)
-    def __init__(self, var=None, *args, **kwargs):
-        super(SensorForm, self).__init__(*args, **kwargs)
-        self.fields['node_name'].queryset = Node.objects.filter(owner=var)
+        ordering = ['-lastUpdate']

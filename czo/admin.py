@@ -5,4 +5,6 @@ from .models import *
 admin.site.register(Node),
 admin.site.register(Sensor),
 admin.site.register(Data),
-admin.site.register(Profile),
+admin.site.register(Gateway),
+admin.site.register(GatewayStats),
+admin.site.register(NodeStats),
