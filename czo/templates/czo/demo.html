@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Kritsnam : Real-time data delivery Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="mqttws31.js" type="text/javascript"></script>
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script src="config.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    var mqtt;
+    var reconnectTimeout = 3000;
+
+    function MQTTconnect() {
+	if (typeof path == "undefined") {
+		path = '/mqtt';
+	}
+	mqtt = new Paho.MQTT.Client(
+			host,
+			port,
+			path,
+			"web_" + parseInt(Math.random() * 100, 10)
+	);
+        var options = {
+            timeout: 3,
+            useSSL: useTLS,
+            cleanSession: cleansession,
+            onSuccess: onConnect,
+            onFailure: function (message) {
+                $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+                setTimeout(MQTTconnect, reconnectTimeout);
+            }
+        };
+
+        mqtt.onConnectionLost = onConnectionLost;
+        mqtt.onMessageArrived = onMessageArrived;
+
+        if (username != null) {
+            options.userName = username;
+            options.password = password;
+        }
+        console.log("Host="+ host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
+        mqtt.connect(options);
+    }
+
+    function onConnect() {
+        $('#status').val('Connected to ' + host + ':' + port + path);
+        // Connection succeeded; subscribe to our topic
+        mqtt.subscribe(topic, {qos: 0});
+        $('#topic').val(topic);
+    }
+
+    function onConnectionLost(response) {
+        setTimeout(MQTTconnect, reconnectTimeout);
+        $('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+
+    };
+
+    function freqPublish(){
+	var node_id = document.getElementById('node_id').value;
+	var topic = 'node/' + node_id + '/f';
+	var frequency = document.getElementById('freq').value;
+	var message = new Paho.MQTT.Message(frequency);
+
+	message.destinationName = topic;
+	message.qos = 1;
+	
+	mqtt.send(message);
+    }    
+
+    function onMessageArrived(message) {
+
+        var topic = message.destinationName;
+        var payload = message.payloadString;
+
+	var table = document.getElementById("demo");
+	var row = table.insertRow(1);
+	var col0 = row.insertCell(0);
+	var col1 = row.insertCell(1);
+	var col2 = row.insertCell(2);
+	var col3 = row.insertCell(3);
+	var col4 = row.insertCell(4);
+
+
+	var node_id = topic.split("/")[1]
+	var msg = payload.split(",")
+	col0.innerHTML = node_id;		// node_id
+	col1.innerHTML = msg[0];		// data
+	col2.innerHTML = msg[1];		// battery
+	col3.innerHTML = msg[2];		// rssi
+
+	var fTime = new Date(msg[3]*1000);
+	var hours = fTime.getHours();
+	var minutes = "0" + fTime.getMinutes();
+	var seconds = "0" + fTime.getSeconds();
+	var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+	col4.innerHTML = formattedTime;		// timestamp
+    };
+
+
+    $(document).ready(function() {
+        MQTTconnect();
+    });
+
+    </script>
+  </head>
+  <body>
+    <h1>Real-Time data retrieval for Testing</h1>
+    <div>
+        <div>Subscribed to <input type='text' id='topic' disabled />
+	Status: <input type='text' id='status' size="64" disabled /></div>
+
+	<br /> 
+	<br />
+	<br />
+
+	<div id="freqChange">
+	<form action="#" onsubmit="freqPublish()" autocomplete="off">
+	<table id="freqSubmit">
+	<tr>
+	<td><div>Node ID</div></td>
+	<td><div><input type="text" id="node_id" value="3" disabled /></div></td>
+	</tr>
+	<tr>
+	<td><div>Frequency</div></td>
+	<td><div><input type="text" id="freq" value="" /></div></td>
+	</tr>
+	<td><div><input type="submit" value="Submit"/></div></td>
+	</tr>
+</table>
+</form>
+</div>
+	<div id="demo_table">
+	<table id="demo" cellspacing="32">
+		<tr>
+			<th>Node ID</th>
+			<th>Data</th>
+			<th>Battery</th>
+			<th>RSSI</th>
+			<th>Timestamp</th>
+		</tr>
+	</table>
+	</div>
+    </div>
+  </body>
+</html>

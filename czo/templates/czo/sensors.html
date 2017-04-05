@@ -8,57 +8,78 @@
 
 {% if mynodes %}
 
-        <div class="">
-          <table class="table">
-            <thead>
-              <tr>
-                <div class="" id="sensor_table">
-                  <th>Sensor_name</th>
-                </div>
-                <div class="" id="last_update">
-                  <th>Last Update</th>
-                </div>
-                <div class="" id="plot_table">
-                  <th>Plot</th>
-                </div>
-              </tr>
-            </thead>
+<div class="" id="sensors_detail">
+  <h4>All Sensors :</h4>
+</div>
+
+          <table class="table" cellpading="0" cellspacing="1" border="1">
+              <thead>
+                <tr>
+                  <div class="" id="sensor_table">
+                    <th>Sensor_name</th>
+                  </div>
+                  <div class="" id="last_update">
+                    <th>Last Update</th>
+                  </div>
+                  <div class="" id="plot_table">
+                    <th>Plot</th>
+                  </div>
+                </tr>
+              </thead>
+
             <tbody>
+                {% for nodes in  mynodes %}
+                    {% if nodes.sensor_set.all %}
+                          {% for node in nodes.sensor_set.all %}
+                              {% if node.id == sensor_id %}
+                                  <tr style="background-color: #d6eaf8">
+                              {% else %}
+                                  <tr>
+                              {%endif%}
 
-              {% for nodes in  mynodes %}
-                  {% if nodes.sensor_set.all %}
-                            {% for  node in nodes.sensor_set.all %}
-                            <tr>
-                              <div class="" id="sensor_table">
-                                    <td><a href ="/czo/data/?sensor_id={{node.id}}"> {{node.name}}  </a></td>
-                              </div>
-                              <div class="" id="last_update">
-                                  {%if node.data_set.all%}
-                                        {%for data in node.data_set.all %}
-                                        {%if forloop.counter == 1 %}
+                                  <div id="sensor_table">
 
-                                          <td> {{data.doc}} </a></td>
+                                      <td><a href ="/czo/data/?sensor_id={{node.id}}"> {{node.name}}  </a></td>
+                                  </div>
 
-                                        {%endif%}
-                                        {%endfor%}
-                                  {%else%}
-                                  <td> Not Updated </a></td>
-                                  {% endif %}
-                              </div>
-                              <div class="" id="plot_table">
-                                  <td>
-                                  <a href ="/czo/sensors/?id={{node.id}}"> <button >Plot</button> </a>
-                                  </td>
-                              </div>
+                                  <div id="last_update">
+                                      {%if node.data_set.all%}
+                                            {%for data in node.data_set.all %}
+                                            {%if forloop.counter == 1 %}
+
+                                              <td> {{data.doc}} </a></td>
+
+                                            {%endif%}
+                                            {%endfor%}
+                                      {%else%}
+                                      <td> Not Updated </a></td>
+                                      {% endif %}
+                                  </div>
+
+                                  <div id="plot_table">
+                                      <td>
+                                          <a href ="/czo/sensors/?id={{node.id}}"> <button >Plot</button> </a>
+                                      </td>
+                                  </div>
+
                             </tr>
 
                         {%endfor%}
-                        {%endif%}
+
+                      {%endif%}
                     {% endfor %}
 
-                  </tbody>
-                </table>
-              </div>
+                </tbody>
+            </table>
+
+
+            <div id="csv">
+                <h4>
+                <a href ="/czo/csv/?sensor_id={{sensor_id}}"> Click </a> Here to download
+                your data as .csv file
+              </h4>
+            </div>
+
 
 {% else %}
 
@@ -78,16 +99,20 @@
   <!DOCTYPE html>
   {% load staticfiles %}
   <meta charset="utf-8">
-  <script src="{% static '/js/react.min.js' %}"></script>
-  <script src="{% static '/js/react-dom.min.js' %}"></script>
   <script src="{% static '/js/browser.min.js' %}"></script>
   <link type="text/css" rel="stylesheet" href="{% static '/css/rickshaw.min.css' %}">
   <script src="{% static '/js/d3.min.js' %}"></script>
   <script src="{% static '/js/d3.layout.min.js' %}"></script>
   <script src="{% static '/js/rickshaw.min.js' %}"></script>
+  <script src="https://momentjs.com/downloads/moment.js"></script>
+  <script>
+      moment().format();
+  </script>
+  <div class="" id="data_range">
+  </div>
+
   <style>
-  <h3> Graph of the last ___ Days </h3>
-  <style>
+
   #chart_container {
           position: relative;
           display: inline-block;
@@ -95,9 +120,9 @@
   }
   #chart {
           display: inline-block;
-          margin-left: 40px;
+          margin-left: 30px;
           margin-right: 10px;
-          margin-top: 40px;
+          margin-top: 10px;
   }
 
   .rickshaw_graph .x_tick .title {
@@ -110,31 +135,56 @@
   }
 
   #plot_range {
-    margin-top: 40px;
-    margin-left: 60px;
+    margin-top: -35px;
+    margin-left: 50px;
+    width: 300px;
   }
 
   #y_axis {
           position: absolute;
-          top: 80;
+          top: 10px;
           bottom: 0;
           width: 40px;
+          margin-left: -10px;
   }
-  #csv{
-          margin-left: 60px;
-          margin-right: 10px;
+  #csv {
+    margin-left: auto;
+    margin-top: 40px;
+
+  }
+
+  #btn_range {
+    margin-left: 318px;
+    margin-top: 40px;
+
+  }
+
+  #filtering1{
+          margin-left: 200px;
           margin-top: 10px;
+  }
+
+#sensors_detail {
+  margin-bottom: 40px:auto;
+  height: 40px;
+}
+
+  #data_range
+  {
+    margin-top: 40px;
+    margin-left: 10px;
   }
   </style>
   <div id="chart_container">
           <div id="y_axis"></div>
           <div id="chart"></div>
-          <div id="legend"></div>
   </div>
+
+
   <script>
-  var palette = new Rickshaw.Color.Palette();
   var arr = [];
   var temp = [];
+  var date = [];
   {% for data in datas|dictsort:"doc"  %}
     var dict = {};
     dict["x"] = parseInt({{ data.doc|date:"U"}});
@@ -142,6 +192,14 @@
     arr.push(dict);
   {%endfor%}
 
+  var i = arr.length;
+  var dateString = moment.unix(arr[0].x).format("MM/DD/YYYY");
+  var dateString1 = moment.unix(arr[i-1].x).format("MM/DD/YYYY");
+  var s = "<h4>Plot of Datapoint Vs Time from " + dateString  +" To " + dateString1 + "</h4>" ;
+  document.getElementById('data_range').innerHTML = s;
+
+
+  var palette = new Rickshaw.Color.Palette();
   var graph = new Rickshaw.Graph( {
           element: document.querySelector("#chart"),
           width: 550,
@@ -160,14 +218,28 @@
   var y_axis = new Rickshaw.Graph.Axis.Y( {
           graph: graph,
           orientation: 'left',
+          label: {
+                  text: 'ms',
+                  color: 'black',
+                  opacity: 0.5,
+                  fontSize: '12px',
+                  offsetX: '1em',
+                  offsetY: '0em',
+                },
           tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
           element: document.getElementById('y_axis'),
   } );
+
+    graph.render();
 
   function plot(i)
     {
       while (arr.length > 0) {
       arr.pop();
+      }
+
+      while (date.length > 0) {
+      date.pop();
       }
 
       while (temp.length > 0) {
@@ -176,18 +248,26 @@
 
       {% for data in datas  %}
         var dict = {};
+        var dict1 = {};
         if ({{forloop.counter}} <= i)
           {
             dict["x"] = parseInt({{ data.doc|date:"U"}});
             dict["y"] = parseInt({{data.data}});
             temp.push(dict);
-              console.log(temp);
           }
+
       {%endfor%}
 
       for (var i = 0; i < temp.length; i++) {
         arr[i] = temp[temp.length - i -1];
       }
+
+      var dateString = moment.unix(arr[0].x).format("MM/DD/YYYY");
+      var dateString1 = moment.unix(arr[i-1].x).format("MM/DD/YYYY");
+
+      var s = "<h4>Plot of Datapoint Vs Time from " + dateString  +" To " + dateString1 + "</h4>" ;
+      document.getElementById('data_range').innerHTML = s;
+
 
     }
 
@@ -195,35 +275,44 @@
     plot(i);
     graph.render();
   }
-  graph.render();
-
 
   </script>
   <br>
   </div>
-  <div class="" id="plot_range">
-    <strong>
-   <h4>No of data points : <input type="text" id="plot_data" />
-    <button onclick="final(document.getElementById('plot_data').value)" id="plot_btn"> Plot </button>
-    <script type="text/javascript">
-      document.getElementById("plot_data")
-          .addEventListener("keyup", function(event) {
-          event.preventDefault();
-          if (event.keyCode == 13) {
-              document.getElementById("plot_btn").click();
-          }
-      });
-    </script>
-  </h4>
-  </strong>
+
+  <div class="" id="btn_range">
+    <button onclick="final(96)" id="plot_btn"> 1 Day </button>
+    <button onclick="final(192)" id="plot_btn"> 2 Day </button>
+    <button onclick="final(288)" id="plot_btn"> 3 Day </button>
+    <button onclick="final(384)" id="plot_btn"> 4 Day </button>
+    <button onclick="final(672)" id="plot_btn"> 1 Week</button>
   </div>
 
-  <div class="" id="csv">
-    <h3>
-    <a href ="/czo/csv/?sensor_id={{sensor_id}}"> Click </a> Here to download
-    your data as .csv file
-    </h3>
+  <div class="" id="plot_range">
+  <strong>
+  <h5>Data points: <input type="text" id="plot_data" style="width:160px;" /> <br>
+  <div class="" id="filtering1">
+    <button onclick="final(document.getElementById('plot_data').value)" id="plot_btn"> Plot </button>
   </div>
+  <script type="text/javascript">
+    document.getElementById("plot_data")
+        .addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode == 13) {
+          if (document.getElementById('plot_data').value == parseInt(document.getElementById('plot_data').value, 10)){
+              document.getElementById("plot_btn").click();
+          }
+          else {
+            alert("No of data points should be a integer");
+          }
+        }
+    });
+  </script>
+  </h5>
+  </strong>
+
+  </div>
+
 
 {%endif%}
 {% endblock body_right %}

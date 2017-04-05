@@ -24,7 +24,7 @@ SECRET_KEY = 'g3=!953$9y)&o_w+s-96om4gi09dkk+$ithu9goc^l6*c3i#8@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['172.25.110.122','172.24.128.220','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['localhost','www.kritsnam.in']
 
 # Application definition
 
@@ -92,9 +92,15 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'max_similarity': .6,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -131,6 +137,6 @@ MEDIA_URL = '/media/'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '##'
-EMAIL_HOST_PASSWORD = '##'
+EMAIL_HOST_USER = 'pandeytestserver'
+EMAIL_HOST_PASSWORD = 'june262016'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

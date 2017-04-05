@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^sensors/$', login_required(views.sensors) , name='sensors'),
     url(r'^sensor/$', login_required(views.sensor) , name='sensor'),
     url(r'^data/$', login_required(views.data) , name='data'),
+    url(r'^gateway/$', login_required(views.gateway) , name='gateway'),
 
     # test -- Will Remove after Completing Project
     url(r'^csv/$', login_required(views.csv_out) , name='test'),

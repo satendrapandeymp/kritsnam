@@ -7,6 +7,106 @@
   width: 100px;
 }
 
+#demo_table {
+  max-height:200px;
+}
+
+.stats {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.gateway {
+
+  margin-top: 20px;
+}
+
+.mqtt_sub {
+  margin-top: 25px;
+}
+
+.mqtt_detail {
+  margin-left: 95px;
+  margin-top: -22px;
+  margin-bottom: 10px;
+}
+
+#freqChange {
+
+  margin-top: 20px;
+
+}
+
+.freqpublish {
+  margin-left: -205px;
+  margin-top: 9px;
+}
+
+#sub {
+  margin-top: 10px;
+  margin-left: 240px;
+}
+
+.mqtt_top {
+  margin-bottom: 20px;
+  height: 300px;
+}
+
+#user_menu {
+  color:  #122143;
+  background: white;
+}
+
+.login_field {
+    width: 350px;
+    height: 270px;
+    background-color: #d5d8dc;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 10px;
+
+    margin: auto;
+}
+
+.set_pass_field {
+    width: 350px;
+    height: 210px;
+    background-color: #d5d8dc;
+
+    border-radius: 10px;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+
+    right: 0;
+
+    margin: auto;
+}
+
+
+.reg_field {
+    width: 350px;
+    height: 270px;
+    background-color: #d5d8dc;
+
+        border-radius: 10px;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+}
+
+
 #plot_table {
   width: 100px;
 }
@@ -18,7 +118,6 @@
 #forget {
   margin-left: 180px;
   margin-top: 20px;
-  background:  #f4f6f6 ;
 
 }
 
@@ -33,7 +132,7 @@
 }
 
 .navbar1{
-    background:  #E8DDCB ;
+    background:    #667890   ;
 }
 
 .body {
@@ -51,7 +150,7 @@ li,ul{
 }
 
 #navigation {
-    background: #033649;
+    background:  #465870 ;
     padding: 0;
 }
 
@@ -92,7 +191,7 @@ li,ul{
     left: -85px;
     padding: 17px;
     color: #122143;
-    background: #E8DDCB;
+    background:   #667890  ;
 }
 
 .view {
@@ -119,7 +218,7 @@ li,ul{
 }
 
 header {
-    background: #E8DDCB;
+    background:   #667890  ;
     box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
     display: inline-block !important;
     line-height: 23px;

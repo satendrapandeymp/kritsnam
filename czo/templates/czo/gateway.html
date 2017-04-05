@@ -1,0 +1,65 @@
+{% extends "czo/base.html" %}
+
+{% block title %}Gateway{% endblock %}
+
+{% block body %}
+
+<div class="gateway">
+  <table class="table" cellpading="0" cellspacing="1" border="1">
+    <thead>
+      <th> Gateway </th>
+      <th> Doc </th>
+      <th> Plot </th>
+    </thead>
+    <tbody>
+
+      {% for gateway in gateways %}
+
+        {% if gateway.id == gateway_id %}
+        <tr style="background-color:#d6eaf8">
+        {% else %}
+        <tr>
+        {% endif %}
+          <td> {{gateway.name}} </td>
+          <td> {{gateway.doc}} </td>
+          <td> <a href ="/czo/gateway/?gateway_id={{gateway.id}}"> <button >Plot</button> </a> </td>
+        </tr>
+
+      {%endfor%}
+
+    </tbody>
+  </table>
+
+</div>
+
+{% endblock %}
+
+{% block body_right %}
+
+<div class="stats">
+
+<table class="table" cellpading="0" cellspacing="1" border="1">
+  <thead>
+    <th> Battery </th>
+    <th> RSSI </th>
+    <th> Ram </th>
+    <th>Time </th>
+  </thead>
+  <tbody>
+
+    {%for stats in gatewaystats%}
+
+      <tr>
+        <td> {{stats.rssi}} </td>
+        <td> {{stats.vcell}} </td>
+        <td> {{stats.soc}} </td>
+        <td> {{stats.lastUpdate}} </td>
+      </tr>
+
+    {%endfor%}
+
+  </tbody>
+</table>
+
+</div>
+{% endblock %}

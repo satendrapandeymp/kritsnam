@@ -7,11 +7,12 @@
 <div class="" id="Left_Side">
 
 
-      <h3>Here Are Your Nodes</h3> <br>
+      <h4>Nodes :</h4>
+      <h6><br></h6>
 
 
                 <div class="">
-                  <table class="table">
+                  <table class="table" cellpading="0" cellspacing="1" border="1" >
                     <thead>
                       <tr>
                         <th>Node_Name</th>
@@ -36,52 +37,187 @@
 {% endblock %}
 
 
+
 {% block body_right %}
 
 <div class="" id="Right_Side">
-  {% if request.user.profile_set.all %}
+
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+      {% load staticfiles %}
+      <script src="{% static '/js/mqttws31.js' %}"></script>
+
+<script type="text/javascript">
+
+//host = 'www.kritsnam.in';	// hostname or IP address
+host = '35.154.96.119';	// hostname or IP address
+port = 8083;
+topic = 'node/#';		// topic to subscribe to
+//topic = 'gw/#';
+useTLS = false;
+username = "web";
+password = "sockets";
+// username = "jjolie";
+// password = "aa";
+
+// path as in "scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]"
+//    defaults to "/mqtt"
+//    may include query and fragment
+//
+// path = "/mqtt";
+// path = "/data/cloud?device=12345";
+
+cleansession = true;
 
 
+</script>
 
-        {% for node in request.user.profile_set.all %}
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script type="text/javascript">
+      var mqtt;
+      var reconnectTimeout = 3000;
 
-        <div class="albums-container container-fluid">
+      function MQTTconnect() {
+  	if (typeof path == "undefined") {
+  		path = '/mqtt';
+  	}
+  	mqtt = new Paho.MQTT.Client(
+  			host,
+  			port,
+  			path,
+  			"web_" + parseInt(Math.random() * 100, 10)
+  	);
+          var options = {
+              timeout: 3,
+              useSSL: useTLS,
+              cleanSession: cleansession,
+              onSuccess: onConnect,
+              onFailure: function (message) {
+                  $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+                  setTimeout(MQTTconnect, reconnectTimeout);
+              }
+          };
 
-            <div class="row"> <br> <br>
+          mqtt.onConnectionLost = onConnectionLost;
+          mqtt.onMessageArrived = onMessageArrived;
 
-                        <div class="col-sm-6 col-lg-5">
-                            <div class="thumbnail">
+          if (username != null) {
+              options.userName = username;
+              options.password = password;
+          }
+          console.log("Host="+ host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
+          mqtt.connect(options);
+      }
 
-                                <div class="caption">
-                                    <h3>{{ node.first_name }}
-                                  {{node.last_name}}
-                                  </h3>
-                                    <p>
-                                      {{node.about}}
+      function onConnect() {
+          $('#status').val('Connected to ' + host + ':' + port + path);
+          // Connection succeeded; subscribe to our topic
+          mqtt.subscribe(topic, {qos: 0});
+          $('#topic').val(topic);
+      }
 
-                                    </p>
-                                    <!-- View Details
-                                    <a href="{% url 'czo:UpdateUser'  node.id %}" class="btn btn-primary btn-sm" role="button">Update</a>
+      function onConnectionLost(response) {
+          setTimeout(MQTTconnect, reconnectTimeout);
+          $('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
 
--->
-                                </div>
-                            </div>
-                        </div>
+      };
 
-            </div>
+      function freqPublish(){
+  	var node_id = document.getElementById('node_id').value;
+  	var topic = 'node/' + node_id + '/f';
+  	var frequency = document.getElementById('freq').value;
+  	var message = new Paho.MQTT.Message(frequency);
+
+  	message.destinationName = topic;
+  	message.qos = 1;
+
+  	mqtt.send(message);
+      }
+
+      function onMessageArrived(message) {
+
+          var topic = message.destinationName;
+          var payload = message.payloadString;
+
+  	var table = document.getElementById("demo");
+  	var row = table.insertRow(1);
+  	var col0 = row.insertCell(0);
+  	var col1 = row.insertCell(1);
+  	var col2 = row.insertCell(2);
+  	var col3 = row.insertCell(3);
+  	var col4 = row.insertCell(4);
 
 
-        </div>
+  	var node_id = topic.split("/")[1]
+  	var msg = payload.split(",")
+  	col0.innerHTML = node_id;		// node_id
+  	col1.innerHTML = msg[0];		// data
+  	col2.innerHTML = msg[1];		// battery
+  	col3.innerHTML = msg[2];		// rssi
+
+  	var fTime = new Date(msg[3]*1000);
+  	var hours = fTime.getHours();
+  	var minutes = "0" + fTime.getMinutes();
+  	var seconds = "0" + fTime.getSeconds();
+  	var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+  	col4.innerHTML = formattedTime;		// timestamp
+      };
 
 
+      $(document).ready(function() {
+          MQTTconnect();
+      });
 
-  {% endfor %}
+      </script>
+</head>
+<body>
+  <h3>Real-Time data retrieval for Testing</h3>
+  <div class="mqtt_sub">
+    <div "mqtt_top">
+      Subscribed to:
+      <div class="mqtt_detail">
+          <input type='text' id='topic' size="35" disabled />
+      </div>
 
+	    Status:
+      <div class="mqtt_detail">
+          <input type='text' id='status' size="35" disabled />
+      </div>
+    </div>
 
+  	<div id="freqChange">
+      	<form action="#" onsubmit="freqPublish()" autocomplete="off">
+          	<table id="freqSubmit">
+              	<tr>
+                  	<td><div>Node ID:</div></td>
+                  	<td><div class="freqpublish"><input type="text" id="node_id" value="3" disabled /></div></td>
+              	</tr>
+              	<tr>
+                  	<td><div>Frequency:</div></td>
+                  	<td><div class="freqpublish"><input type="text" id="freq" value="" /></div></td>
+              	</tr>
+          	       <td><div id="sub"><input type="submit" value="Submit"/></div></td>
+          	    </tr>
+            </table>
+        </form>
+    </div>
 
-  {% else %}
+  	<div id="demo_table">
 
-  {% endif %}
+      	<table class="table" id="demo" cellpading="0" cellspacing="1" border="1">
+        		<tr>
+          			<th>Node ID</th>
+          			<th>Data</th>
+          			<th>Battery</th>
+          			<th>RSSI</th>
+          			<th>Timestamp</th>
+        		</tr>
+      	</table>
+  	</div>
+  </div>
+  </body>
+  </html>
 
-</div>
-{% endblock  %}
+{% endblock body_right %}

@@ -75,7 +75,7 @@ class GatewayStats(models.Model):
     vcell = models.FloatField(help_text="battery voltage")
     soc = models.FloatField(help_text="state of charge")
     lastUpdate = models.DateTimeField(default=datetime.datetime.now)
-    
+
     class Meta:
         ordering = ['-lastUpdate']
 

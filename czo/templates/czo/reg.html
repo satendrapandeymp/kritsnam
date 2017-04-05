@@ -4,48 +4,65 @@
 
 {% block body  %}
 
-<div class="container-fluid">
-
-    <form class="form-horizontal", action="", method="post" ,enctype="multipart/form-data">
-          {% csrf_token %}
-          {% include "czo/AddUser.html" %}
-          <div class="form-group">
-              <div class="col-sm-offset-2 col-sm-10">
-                    <br>
-                    <button type="submit" class="btn btn-success"> Create Account </button>
-                     <br> <br>
 
 
-                        Already have an account? <a href="{% url 'czo:login' %}">Click here</a> to log in.
+<div class="reg_field">
 
+<div class="centered">
 
+<div class="container">
 
-              </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
 
+                <div class="panel-body">
+                    <strong> <h4> Register:</h4> </strong>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    <form class="form-horizontal" role="form" action="{% url 'czo:register'%}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_username">
+                                Username:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_username" maxlength="30" name="username" type="text" placeholder="Your username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_password">
+                                Password:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_password" maxlength="30" name="password" type="password" placeholder="Atleast 8 char and num long">
+                            </div>
+                        </div>
 
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_email">
+                                Email:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_email" maxlength="30" name="email" type="email" placeholder="Your Valid email id for otp">
+                            </div>
+                        </div>
 
-          </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-5 col-sm-15">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
 
+            </div>
+        </div>
+    </div>
 
-    </form>
+</div>
+
+</div>
 
 </div>
 
 {% endblock  %}
-
-
-{% block body_right %}
-
-<div class="" id="Right_Side">
-
-  <h3> Here are something that can help you </h3>
-    <p>
-        We made a help page to help you throughout.
-        We will gonna put some suggestion for you here.
-    </p>
-</div>
-
-
-
-
-{% endblock body_right %}

@@ -6,10 +6,17 @@ webshims.polyfill('forms forms-ext');
 {% extends "czo/base.html" %}
 {% block title %}Data{% endblock %}
 {% block body %}
+
 <div class="" id="Left_Side">
+
         {% if mysensor %}
-                <h3>Here is your Data Sir --  <br> </h3>
-                    <table class="table">
+
+                <div class="" id="data">
+                  <h4>Datas :</h4>
+                </div>
+
+
+                    <table class="table" cellpading="0" cellspacing="1" border="1" >
                       <thead>
                         <tr>
                           <th>Sr.</th>
@@ -32,6 +39,13 @@ webshims.polyfill('forms forms-ext');
         {% else %}
             <h3>No data In this sensor </h3>
         {% endif %}
+
+        <div class="" id="csv1">
+          <h4>
+          <a href ="/czo/csv/?sensor_id={{name}}"> Click </a> Here to download
+          your data as .csv file
+        </h4>
+        </div>
 </div>
 {% endblock %}
 
@@ -40,28 +54,57 @@ webshims.polyfill('forms forms-ext');
   <!DOCTYPE html>
   {% load staticfiles %}
   <meta charset="utf-8">
-  <script src="{% static '/js/react.min.js' %}"></script>
-  <script src="{% static '/js/react-dom.min.js' %}"></script>
   <script src="{% static '/js/browser.min.js' %}"></script>
   <link type="text/css" rel="stylesheet" href="{% static '/css/rickshaw.min.css' %}">
   <script src="{% static '/js/d3.min.js' %}"></script>
   <script src="{% static '/js/d3.layout.min.js' %}"></script>
   <script src="{% static '/js/rickshaw.min.js' %}"></script>
-  <script src="https://momentjs.com/downloads/moment.min.js"></script>
   <script type="text/javascript" src="http://duijnisveld.wpengine.com/wp-content/themes/duijnisveld-kascontructies/scripts/min/theme-min.js?ver=4.5.3"></script>
+  <script src="https://momentjs.com/downloads/moment.js"></script>
+  <script>
+      moment().format();
+  </script>
 
-  <div class="" id="form">
-    <form class="" action="" method="post">
-        {% csrf_token %}
-        <input type="date" name="initial"/>
-        <input type="date" name="final"/>
-          <input type="Submit" name="" value="Submit">
-    </form>
+
+  <div class="" id="data_range">
   </div>
+
   <style>
 
   #form{
+          margin-top: 40px;
           margin-left: 40px;
+          width: 300px;
+  }
+
+  #first{
+          margin-left: 0px;
+          margin-top: 10px;
+  }
+
+  #second{
+          margin-left: 0px;
+          margin-top: 10px;
+  }
+
+  #data{
+          margin-left: 0px;
+          margin-bottom: 20px;
+  }
+
+  #filtering{
+          margin-left: 195px;
+          margin-top: 10px;
+  }
+
+  #filtering1{
+          margin-left: 200px;
+          margin-top: 10px;
+  }
+
+
+  #data_point {
+    margin-top: 50px;
   }
 
   #chart_container {
@@ -73,27 +116,56 @@ webshims.polyfill('forms forms-ext');
           display: inline-block;
           margin-left: 40px;
           margin-right: 10px;
-          margin-top: 40px;
+          margin-top: 10px;
   }
-  #offset_form {
-          margin-top: 40px;
-          margin-left: 40px;
-          font-size: 15px;
+  .rickshaw_graph .x_tick .title {
+    bottom: -24px;
+    left: -18px;
   }
+
+  #plot_range {
+    margin-top: 60px;
+    margin-left: 45px;
+    width: 550;
+  }
+
+
   #y_axis {
           position: absolute;
-          top: 40;
+          top: 10;
           bottom: 0;
           width: 40px;
+  }
+  #csv {
+    margin-left: 325px;
+    margin-top: -115px;
+    width: 250px;
+
   }
   </style>
   <div id="chart_container">
           <div id="y_axis"></div>
           <div id="chart"></div>
   </div>
+
+  <div class="" id="form">
+    <form class="" action="" method="post" id="date_filter">
+        {% csrf_token %}
+        <div class="" id="first">
+          Initial Date: <input type="date" name="initial" id="initial_time"/>
+        </div>
+        <div class="" id="second">
+          Final Date:  <input type="date" name="final" id="final_time"/>
+        </div>
+        <div class="" id="filtering">
+          <input type="Submit" name="" value="Submit" id="Submit">
+        </div>
+    </form>
+  </div>
+
   <script>
-  var palette = new Rickshaw.Color.Palette();
   var arr = [];
+  var temp = [];
   {% for data in mysensor|dictsort:"doc"  %}
     var dict = {};
     dict["x"] = parseInt({{ data.doc|date:"U"}});
@@ -101,36 +173,129 @@ webshims.polyfill('forms forms-ext');
     arr.push(dict);
   {%endfor%}
 
-  var graph = new Rickshaw.Graph( {
-          element: document.querySelector("#chart"),
-          width: 550,
-          height: 250,
-          series: [
-                          {
+  var i = arr.length;
+  var dateString = moment.unix(arr[0].x).format("MM/DD/YYYY");
+  var dateString1 = moment.unix(arr[i-1].x).format("MM/DD/YYYY");
+  var s = "<h4>Plot of Datapoint Vs Time from " + dateString  +" To " + dateString1 + "</h4>" ;
+  document.getElementById('data_range').innerHTML = s;
 
-                                  data: arr,
-                                  color: palette.color()
-                          }
 
-                    ]
-  } );
-  var x_axis = new Rickshaw.Graph.Axis.Time( {
-          graph: graph,
-          orientation: "bottom",
-          element: document.getElementById("x_axis"),
-  } );
-  var y_axis = new Rickshaw.Graph.Axis.Y( {
-          graph: graph,
-          orientation: 'left',
-          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-          element: document.getElementById('y_axis'),
-  } );
-  graph.render();
+    var palette = new Rickshaw.Color.Palette();
+    var graph = new Rickshaw.Graph( {
+            element: document.querySelector("#chart"),
+            width: 550,
+            height: 250,
+            series: [
+                            {
+
+                                    data: arr,
+                                    color: palette.color()
+                            }
+
+                      ]
+    } );
+
+    var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+    var y_axis = new Rickshaw.Graph.Axis.Y( {
+            graph: graph,
+            orientation: 'left',
+            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+            element: document.getElementById('y_axis'),
+    } );
+
+      graph.render();
+
+  function plot(i)
+    {
+      while (arr.length > 0) {
+      arr.pop();
+      }
+
+      while (temp.length > 0) {
+      temp.pop();
+      }
+
+      {% for data in mysensor %}
+        var dict = {};
+        if ({{forloop.counter}} <= i)
+          {
+            dict["x"] = parseInt({{ data.doc|date:"U"}});
+            dict["y"] = parseInt({{data.data}});
+            temp.push(dict);
+              console.log(temp);
+          }
+      {%endfor%}
+
+      for (var i = 0; i < temp.length; i++) {
+        arr[i] = temp[temp.length - i -1];
+      }
+      var dateString = moment.unix(arr[0].x).format("MM/DD/YYYY");
+      var dateString1 = moment.unix(arr[i-1].x).format("MM/DD/YYYY");
+
+      var s = "<h4>Plot of Datapoint Vs Time from " + dateString  +" To " + dateString1 + "</h4>" ;
+      document.getElementById('data_range').innerHTML = s;
+
+
+    }
+
+    function final(i) {
+                        plot(i);
+                        graph.render();
+                      }
+
   </script>
-    <h3> Graph of the last ___ Days </h3>
-  <h3>
-  <a href ="/czo/csv/?sensor_id={{name}}"> Click </a> Here to download
-  your data as .csv file
-</h3>
+
+
+  <div id="csv">
+
+    <strong>
+             <h5>Data points: <input type="text" id="plot_data" style="width:160px;" /> <br>
+               <div class="" id="filtering1">
+                  <button onclick="final(document.getElementById('plot_data').value)" id="plot_btn"> Plot </button>
+              </div>
+              <script type="text/javascript">
+                  document.getElementById("plot_data")
+                  .addEventListener("keyup", function(event) {
+                  event.preventDefault();
+                  if (event.keyCode == 13) {
+                    if (document.getElementById('plot_data').value == parseInt(document.getElementById('plot_data').value, 10)){
+                        document.getElementById("plot_btn").click();
+                    }
+                    else {
+                      alert("No of data points should be a integer");
+                    }
+                  }
+                  });
+              </script>
+            </h5>
+    </strong>
+
+  </div>
+
+  <div class="" id="plot_range">
+
+    <button onclick="final(96)" id="plot_btn"> 1 Day </button>
+    <button onclick="final(192)" id="plot_btn"> 2 Day </button>
+    <button onclick="final(672)" id="plot_btn"> 1 Week </button>
+    <button onclick="month_year(1)" id="plot_btn"> 1 Month</button>
+    <button onclick="month_year(3)" id="plot_btn"> 3 Month</button>
+    <button onclick="month_year(6)" id="plot_btn"> 6 Month</button>
+    <button onclick="month_year(12)" id="plot_btn"> 1 Year</button>
+    <button onclick="month_year(120)" id="plot_btn"> Lifetime </button>
+    <script >
+
+          var a = Math.floor((new Date()).getTime() / 1000);
+
+          function month_year(i) {
+                          document.getElementById('final_time').value = moment(Date()).format('YYYY-MM-DD');
+                          document.getElementById('initial_time').value = moment().add(-i*30, 'days').format('YYYY-MM-DD');
+                          //alert(document.getElementById('initial_time').value);
+                          document.forms[0].submit();
+          }
+
+    </script>
+
+  </div>
+
 </div>
 {% endblock body_right %}
