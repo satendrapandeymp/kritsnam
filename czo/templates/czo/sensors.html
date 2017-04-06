@@ -9,14 +9,14 @@
 {% if mynodes %}
 
 <div class="" id="sensors_detail">
-  <h4>All Sensors :</h4>
+  <h4>All Nodes :</h4>
 </div>
 
           <table class="table" cellpading="0" cellspacing="1" border="1">
               <thead>
                 <tr>
                   <div class="" id="sensor_table">
-                    <th>Sensor_name</th>
+                    <th>Node_name</th>
                   </div>
                   <div class="" id="last_update">
                     <th>Last Update</th>
@@ -28,29 +28,26 @@
               </thead>
 
             <tbody>
-                {% for nodes in  mynodes %}
-                    {% if nodes.sensor_set.all %}
-                          {% for node in nodes.sensor_set.all %}
-                              {% if node.id == sensor_id %}
-                                  <tr style="background-color: #d6eaf8">
-                              {% else %}
+                {% for node in  mynodes %}
+                            {% if node.id == sensor_id %}
+                                <tr style="background-color: #d6eaf8">
+                            {% else %}
                                   <tr>
                               {%endif%}
 
                                   <div id="sensor_table">
 
-                                      <td><a href ="/czo/data/?sensor_id={{node.id}}"> {{node.name}}  </a></td>
+                                      <td><a href ="/czo/data/?node_id={{node.id}}"> {{node.name}}  </a></td>
                                   </div>
 
                                   <div id="last_update">
-                                      {%if node.data_set.all%}
-                                            {%for data in node.data_set.all %}
-                                            {%if forloop.counter == 1 %}
+                                      {%if datas %}
 
-                                              <td> {{data.doc}} </a></td>
-
-                                            {%endif%}
-                                            {%endfor%}
+                                      {% for data in datas %}
+                                              {%if forloop.counter == 1 %}
+                                              <td> {{data.timestamp}} </a></td>
+                                              {% endif %}
+                                      {% endfor %}
                                       {%else%}
                                       <td> Not Updated </a></td>
                                       {% endif %}
@@ -58,16 +55,13 @@
 
                                   <div id="plot_table">
                                       <td>
-                                          <a href ="/czo/sensors/?id={{node.id}}"> <button >Plot</button> </a>
+                                          <a href ="/czo/nodes/?id={{node.id}}"> <button >Plot</button> </a>
                                       </td>
                                   </div>
 
                             </tr>
 
-                        {%endfor%}
-
-                      {%endif%}
-                    {% endfor %}
+                      {% endfor %}
 
                 </tbody>
             </table>
@@ -108,7 +102,10 @@
   <script>
       moment().format();
   </script>
-  <div class="" id="data_range">
+  <div class="data_range1">
+    <button type="button" class="btn btn-primary" onclick="type_graph(1)" id="plot_btn" style="margin-left:12px"> Data </button>
+    <button type="button" class="btn btn-primary" onclick="type_graph(2)" id="plot_btn"style="margin-left:12px"> Rssi </button>
+    <button type="button" class="btn btn-primary" onclick="type_graph(3)" id="plot_btn"style="margin-left:12px"> Battery </button>
   </div>
 
   <style>
@@ -171,23 +168,70 @@
 
   #data_range
   {
-    margin-top: 40px;
-    margin-left: 10px;
+    margin-top: 15px;
+    margin-left: 50px;
   }
+
+  .data_range1
+  {
+    margin-top: -10px;
+    margin-bottom: 10px;
+    margin-left: 345px;
+  }
+
+
+
   </style>
   <div id="chart_container">
           <div id="y_axis"></div>
           <div id="chart"></div>
   </div>
 
+</div>
+
+<div class="" id="btn_range">
+  <button onclick="final(96)" id="plot_btn"> 1 Day </button>
+  <button onclick="final(192)" id="plot_btn"> 2 Day </button>
+  <button onclick="final(288)" id="plot_btn"> 3 Day </button>
+  <button onclick="final(384)" id="plot_btn"> 4 Day </button>
+  <button onclick="final(672)" id="plot_btn"> 1 Week</button>
+</div>
+
+<div id="plot_range">
+<strong>
+<h5>Data points: <input type="text" id="plot_data" style="width:160px;" /> <br>
+<div class="" id="filtering1">
+  <button onclick="final(document.getElementById('plot_data').value)" id="plot_btn"> Plot </button>
+</div>
+<script type="text/javascript">
+  document.getElementById("plot_data")
+      .addEventListener("keyup", function(event) {
+      event.preventDefault();
+      if (event.keyCode == 13) {
+        if (document.getElementById('plot_data').value == parseInt(document.getElementById('plot_data').value, 10)){
+            document.getElementById("plot_btn").click();
+        }
+        else {
+          alert("No of data points should be a integer");
+        }
+      }
+  });
+</script>
+</h5>
+</strong>
+
+</div>
+<div class="" id="data_range">
+</div>
 
   <script>
   var arr = [];
   var temp = [];
   var date = [];
-  {% for data in datas|dictsort:"doc"  %}
+
+  {% for data in datas|dictsort:"timestamp"  %}
     var dict = {};
-    dict["x"] = parseInt({{ data.doc|date:"U"}});
+    dict["x"] = parseInt({{ data.timestamp|date:"U"}});
     dict["y"] = parseInt({{data.data}});
     arr.push(dict);
   {%endfor%}
@@ -232,7 +276,7 @@
 
     graph.render();
 
-  function plot(i)
+  function plot(i,j)
     {
       while (arr.length > 0) {
       arr.pop();
@@ -251,9 +295,21 @@
         var dict1 = {};
         if ({{forloop.counter}} <= i)
           {
-            dict["x"] = parseInt({{ data.doc|date:"U"}});
-            dict["y"] = parseInt({{data.data}});
-            temp.push(dict);
+            if (j==1){
+              dict["x"] = parseInt({{ data.timestamp|date:"U"}});
+              dict["y"] = parseInt({{data.data}});
+              temp.push(dict);
+            }
+            if (j==2){
+              dict["x"] = parseInt({{ data.timestamp|date:"U"}});
+              dict["y"] = parseInt({{data.rssi}});
+              temp.push(dict);
+            }
+            if (j==3){
+              dict["x"] = parseInt({{ data.timestamp|date:"U"}});
+              dict["y"] = parseInt({{data.battery}});
+              temp.push(dict);
+            }
           }
 
       {%endfor%}
@@ -272,47 +328,17 @@
     }
 
     function final(i) {
-    plot(i);
+    plot(i,1);
+    graph.render();
+  }
+
+  function type_graph(j) {
+    plot(arr.length,j);
     graph.render();
   }
 
   </script>
   <br>
-  </div>
-
-  <div class="" id="btn_range">
-    <button onclick="final(96)" id="plot_btn"> 1 Day </button>
-    <button onclick="final(192)" id="plot_btn"> 2 Day </button>
-    <button onclick="final(288)" id="plot_btn"> 3 Day </button>
-    <button onclick="final(384)" id="plot_btn"> 4 Day </button>
-    <button onclick="final(672)" id="plot_btn"> 1 Week</button>
-  </div>
-
-  <div class="" id="plot_range">
-  <strong>
-  <h5>Data points: <input type="text" id="plot_data" style="width:160px;" /> <br>
-  <div class="" id="filtering1">
-    <button onclick="final(document.getElementById('plot_data').value)" id="plot_btn"> Plot </button>
-  </div>
-  <script type="text/javascript">
-    document.getElementById("plot_data")
-        .addEventListener("keyup", function(event) {
-        event.preventDefault();
-        if (event.keyCode == 13) {
-          if (document.getElementById('plot_data').value == parseInt(document.getElementById('plot_data').value, 10)){
-              document.getElementById("plot_btn").click();
-          }
-          else {
-            alert("No of data points should be a integer");
-          }
-        }
-    });
-  </script>
-  </h5>
-  </strong>
-
-  </div>
-
 
 {%endif%}
 {% endblock body_right %}

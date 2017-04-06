@@ -25,14 +25,14 @@ def gateway(request):
             mygateway = Gateway.objects.filter(id=gateway_id)
             mygateways = Gateway.objects.all()
             if (mygateway):
-                gatewaystats = GatewayStats.objects.filter(gateway=mygateway[0].id)
+                gatewaystats = GatewayStats.objects.filter(gateway=mygateway[0].id)[:10]
                 print (len(gatewaystats))
                 return render(request, 'czo/gateway.html' , { 'gateways' : mygateways, 'gatewaystats' : gatewaystats , 'gateway_id':int(gateway_id) })
             return render(request, 'czo/sensor.html')
         else:
             mygateways = Gateway.objects.all()
             if (mygateways):
-                gatewaystats = GatewayStats.objects.filter(gateway=mygateways[0].id)
+                gatewaystats = GatewayStats.objects.filter(gateway=mygateways[0].id)[:10]
                 return render(request, 'czo/gateway.html' , { 'gateways' : mygateways, 'gatewaystats' : gatewaystats , 'gateway_id':mygateways[0].id })
             return render(request, 'czo/sensor.html')
     else:
@@ -84,7 +84,7 @@ def forget_pass(request):
             subject =  "OTP for activation of your account: "
             x = random.randint(100000,999999)
             message =   ("Hi " + username + " Put this number in form to verify your Email : "
-                        + str(x) + ", you can also follow to this link to set new_pass to your Account http://127.0.0.1:8000/czo/set_pass/?username="
+                        + str(x) + ", you can also follow to this link to set new_pass to your Account http://www.kritsnam.in/czo/set_pass/?username="
                         + username)
             to_email = user.email
             from_email = "satendrapandeymp@gmail.com"
@@ -96,11 +96,6 @@ def forget_pass(request):
             return render(request,'czo/forget_pass.html', {'error_message': 'Wrong username'}  )
     else:
         return render(request,'czo/forget_pass.html')
-
-# It's the homepage
-def index(request):
-        mynodes = Node.objects.filter(owner=request.user)
-        return render(request, 'czo/index.html' , { 'mynodes' : mynodes})
 
 # It's for testing some new things
 def otp(request):
@@ -124,7 +119,7 @@ def otp(request):
                 subject =  "OTP for activation of your account: "
                 x = random.randint(100000,999999)
                 message =   ("Hi " + myuser.username + " Put this number in form to verify your Email : "
-                            + str(x) + ", you can also follow to this link to verify your otp http://127.0.0.1:8000/czo/otp/?username="
+                            + str(x) + ", you can also follow to this link to verify your otp http://www.kritsnam.in/czo/otp/?username="
                             + myuser.username)
                 to_email = myuser.email
                 from_email = "satendrapandeymp@gmail.com"
@@ -159,7 +154,7 @@ class Register_User(View):
                 subject =  "OTP for activation of your account: "
                 x = random.randint(100000,999999)
                 message =   ("Hi " + username + " Put this number in form to verify your Email : "
-                            + str(x) + ", you can also follow to this link to verify your otp http://127.0.0.1:8000/czo/otp/?username="
+                            + str(x) + ", you can also follow to this link to verify your otp http://www.kritsnam.in/czo/otp/?username="
                             + username)
                 to_email = user.email
                 from_email = "satendrapandeymp@gmail.com"
@@ -197,75 +192,50 @@ def logout_user(request):
         logout(request)
         return HttpResponseRedirect('/')
 
+# It's the homepage
+def index(request):
+        mynodes = Node.objects.filter(owner=request.user)
+        return render(request, 'czo/index.html' , { 'mynodes' : mynodes})
+
+
 # To find all Sensors att One place
-def sensors(request):
+def nodes(request):
     if request.method=="GET":
-        sensor_id = request.GET.get('id')
-        if sensor_id==None:
+        node_id = request.GET.get('id')
+        if node_id==None:
             mynodes = Node.objects.filter(owner=request.user)
             if (mynodes):
-                sensors = Sensor.objects.filter(node_name=mynodes[0].id)[:1]
-                if (sensors):
-                    timedelta1 = timedelta(days=7)
-                    datas = Data.objects.filter(sensor_name=sensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
-                    sensor_first = sensors[0].id
-                    return render(request, 'czo/sensors.html' , { 'mynodes' : mynodes, 'datas' : datas , 'sensor_id' : sensor_first})
+                timedelta1 = timedelta(days=7)
+                datas = NodeStats.objects.filter(node=mynodes[0].id, timestamp__gte= datetime.datetime.now()-timedelta1)
+                sensor_first = mynodes[0].id
+                return render(request, 'czo/sensors.html' , { 'mynodes' : mynodes, 'datas' : datas , 'sensor_id' : sensor_first})
         else:
             var = 0
             mynodes = Node.objects.filter(owner=request.user)
             if (mynodes):
-                sensors = Sensor.objects.filter(id=sensor_id)
-                if (sensors):
-                    node = Node.objects.filter(owner=request.user, name = sensors[0].node_name)[:1]
-                    if node!={}:
-                        timedelta1 = timedelta(days=7)
-                        datas = Data.objects.filter(sensor_name=sensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
-                        return render(request, 'czo/sensors.html' , { 'mynodes' : mynodes, 'datas' : datas , 'sensor_id' : int(sensor_id)})
+                mynode = Node.objects.filter(owner=request.user, id=node_id )[:1]
+                if(mynode):
+                    timedelta1 = timedelta(days=7)
+                    datas = NodeStats.objects.filter(node=mynode[0].id, timestamp__gte= datetime.datetime.now()-timedelta1)
+                    return render(request, 'czo/sensors.html' , { 'mynodes' : mynodes, 'datas' : datas , 'sensor_id' : int(node_id)})
     return render(request, 'czo/sensors.html')
-# To Find all sensors attached to a Node
-def sensor(request):
-    if request.method=="GET":
-        node_req = request.GET.get('node_id')
-        sensor_id = request.GET.get('sensor_id')
-        if node_req!=None:
-            if sensor_id==None:
-                mynodes = Node.objects.filter(id=node_req,owner=request.user)
-                if (mynodes):
-                    sensors = Sensor.objects.filter(node_name=mynodes[0].id)[:1]
-                    if (sensors):
-                        timedelta1 = timedelta(days=7)
-                        datas = Data.objects.filter(sensor_name=sensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
-                        name = sensors[0].name
-                        return render(request, 'czo/sensor.html' , { 'mynodes' : mynodes, 'datas' : datas , 'nodeName' : node_req,'sensor_id' :sensors[0].id})
-            else:
-                var = 0
-                mynodes = Node.objects.filter(id=node_req,owner=request.user)
-                if (mynodes):
-                    sensors = Sensor.objects.filter(id=sensor_id)
-                    if (sensors):
-                        node = Node.objects.filter(owner=request.user, name = sensors[0].node_name)[:1]
-                        if node!={}:
-                            timedelta1 = timedelta(days=7)
-                            datas = Data.objects.filter(sensor_name=sensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
-                            name = sensors[0].name
-                            return render(request, 'czo/sensor.html' , { 'mynodes' : mynodes, 'datas' : datas , 'nodeName' : node_req,'sensor_id' :int(sensor_id)})
-    return render(request, 'czo/sensor.html')
 
 # To find data of a sensor
 def data(request):
-    sensor_id = request.GET.get('sensor_id')
+    sensor_id = request.GET.get('node_id')
     if request.method=="GET":
-        mysensors = Sensor.objects.filter(id=sensor_id)
+        mynodes = Node.objects.filter(owner=request.user, id=sensor_id)
         timedelta1 = timedelta(days=7)
-        lol = Data.objects.filter(sensor_name=mysensors[0].id, doc__gte= datetime.datetime.now()-timedelta1)
+        lol = NodeStats.objects.filter(node=mynodes[0].id, timestamp__gte= datetime.datetime.now()-timedelta1)
         return render(request, 'czo/data.html' , {  'mysensor' : lol, 'name':sensor_id})
     else:
-        mysensors = Sensor.objects.filter(id=sensor_id)
+        mynodes = Node.objects.filter(owner=request.user)
         timedelta1 = request.POST['initial']
         timedelta2 = request.POST['final']
-        print(timedelta1);
-        print(timedelta2);
-        lol = Data.objects.filter(sensor_name=mysensors[0].id, doc__gte= timedelta1 , doc__lte= timedelta2)
+        print(timedelta1)
+        print(timedelta2)
+        lol = NodeStats.objects.filter(node=sensor_id, timestamp__gte= timedelta1, timestamp__lte=timedelta2 )
+        print(lol)
         return render(request, 'czo/data.html' , {  'mysensor' : lol,'name':sensor_id})
 
 # For CSV Download
@@ -274,9 +244,9 @@ def csv_out(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=sensor-{0}.csv'.format(sensor_id)
-    Datas = Data.objects.filter(sensor_name=sensor_id).order_by('doc')
+    Datas = NodeStats.objects.filter(node=sensor_id)
     writer = csv.writer(response)
-    writer.writerow(['Data', 'Timestamp'])
+    writer.writerow(['Data', 'Rssi', 'Battery', 'Timestamp'])
     for data in Datas:
-        writer.writerow([data.data, data.doc])
+        writer.writerow([data.data, data.rssi, data.battery, data.timestamp])
     return response

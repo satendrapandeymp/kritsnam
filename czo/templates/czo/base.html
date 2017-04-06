@@ -22,7 +22,7 @@
                 <div class="navi">
                     <ul>
                         <li class=""><a href="{% url 'czo:index' %}"><i class="fa fa-home" aria-hidden="true"></i><span class="hidden-xs hidden-sm">Home</span></a></li>
-                        <li class=""><a href="{% url 'czo:sensors' %}"><i class="fa fa-tasks" aria-hidden="true"></i><span class="hidden.bs.tooltip">Sensors</span></a></li>
+                        <li class=""><a href="{% url 'czo:nodes' %}"><i class="fa fa-tasks" aria-hidden="true"></i><span class="hidden.bs.tooltip">Nodes</span></a></li>
                         {% if request.user.is_superuser %}
                           <li class=""><a href="{% url 'czo:gateway' %}"><i class="fa fa-tasks" aria-hidden="true"></i><span class="hidden.bs.tooltip">Gateway</span></a></li>
                         {% endif %}

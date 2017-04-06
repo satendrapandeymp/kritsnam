@@ -23,7 +23,7 @@
                     <tbody>
         {% for node in  mynodes %}
                       <tr>
-                        <td><a href ="sensor/?node_id={{node.id}}"> {{node.name}}  </a></td>
+                        <td><a href ="data/?node_id={{node.id}}"> {{node.name}}  </a></td>
                         <td> {{node.doc}} </a></td>
                       </tr>
 
@@ -37,8 +37,9 @@
 {% endblock %}
 
 
-
 {% block body_right %}
+
+{% if request.user.is_superuser %}
 
 <div class="" id="Right_Side">
 
@@ -219,5 +220,8 @@ cleansession = true;
   </div>
   </body>
   </html>
+
+  {% endif %}
+
 
 {% endblock body_right %}

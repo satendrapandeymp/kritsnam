@@ -19,11 +19,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'g3=!953$9y)&o_w+s-96om4gi09dkk+$ithu9goc^l6*c3i#8@'
+with open('/etc/secret_key.txt') as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['localhost','www.kritsnam.in']
 
 # Application definition
@@ -72,12 +72,15 @@ WSGI_APPLICATION = 'project1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+with open('/etc/password.txt') as f:
+    lol = f.read().strip()
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test',
+        'NAME': 'kritsnam',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': lol,
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '',
         'OPTIONS': {
@@ -133,6 +136,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
+
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587

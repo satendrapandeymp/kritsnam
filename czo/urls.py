@@ -9,8 +9,7 @@ urlpatterns = [
 
     # Basic Things For User
     url(r'^$', login_required(views.index) , name='index'),
-    url(r'^sensors/$', login_required(views.sensors) , name='sensors'),
-    url(r'^sensor/$', login_required(views.sensor) , name='sensor'),
+    url(r'^nodes/$', login_required(views.nodes) , name='nodes'),
     url(r'^data/$', login_required(views.data) , name='data'),
     url(r'^gateway/$', login_required(views.gateway) , name='gateway'),
 

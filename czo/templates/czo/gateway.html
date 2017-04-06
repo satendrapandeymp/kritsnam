@@ -4,6 +4,8 @@
 
 {% block body %}
 
+<h4>Gateway:</h4>
+
 <div class="gateway">
   <table class="table" cellpading="0" cellspacing="1" border="1">
     <thead>
@@ -36,6 +38,8 @@
 
 {% block body_right %}
 
+<h4>GatewayStats:</h4>
+
 <div class="stats">
 
 <table class="table" cellpading="0" cellspacing="1" border="1">
@@ -49,13 +53,14 @@
 
     {%for stats in gatewaystats%}
 
+{%if forloop.counter < 11%}
       <tr>
         <td> {{stats.rssi}} </td>
         <td> {{stats.vcell}} </td>
         <td> {{stats.soc}} </td>
-        <td> {{stats.lastUpdate}} </td>
+        <td> {{stats.timestamp}} </td>
       </tr>
-
+{% endif %}
     {%endfor%}
 
   </tbody>
